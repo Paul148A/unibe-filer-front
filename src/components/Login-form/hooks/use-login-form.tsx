@@ -7,7 +7,7 @@ const UseLoginForm = () => {
   const [identification, setIdentification] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { refreshUser, user, loading } = useAuth();
+  const { refreshUser, user, loading, setLoading } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -29,12 +29,14 @@ const UseLoginForm = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    setLoading(true);
     try {
       await login({ identification, password });
       await refreshUser();
-
+      setLoading(false);
     } catch (error) {
       console.error("Error en login:", error);
+      setLoading(false);
     }
   };
 

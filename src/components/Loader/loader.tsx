@@ -1,10 +1,15 @@
+import { CircularProgress } from "@mui/material"
+import { Backdrop } from "@mui/material"
 
 const Loader = () => {
   return (
     <div>
-        <div className="flex justify-center items-center h-screen">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900 dark:border-white"></div>
-        </div>
+      <Backdrop
+        sx={(theme) => ({ color: '#fff', zIndex: theme.zIndex.drawer + 1 })}
+        open={true}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   )
 }

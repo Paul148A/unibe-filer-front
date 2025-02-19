@@ -3,11 +3,12 @@ import { useAuth } from '../../../../components/Context/context';
 import { logout } from '../../../../services/auth/login.service';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../../../components/Loader/loader';
-
+import WelcomeView from '../../../../components/Welcome-view/welcome-view';
 const AdminDashboard = () => {
-  const { refreshUser, setUser, user } = useAuth();
+  const { refreshUser, setUser, user, loading } = useAuth();
   const navigate = useNavigate();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showWelcome, setShowWelcome] = useState(true);
 
   const handleLogout = async () => {
     try {
@@ -22,6 +23,14 @@ const AdminDashboard = () => {
   };
 
   useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowWelcome(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     if (isLoggingOut && !user) {
       navigate('/');
     }
@@ -29,10 +38,18 @@ const AdminDashboard = () => {
 
   return (
     <div>
-      <div>Bienvenido administrador</div>
-      <button onClick={handleLogout} disabled={isLoggingOut}>
-        {isLoggingOut ? <Loader /> : 'Cerrar sesión'}
-      </button>
+      {loading ? <Loader /> : (
+        <>
+          {showWelcome ? <WelcomeView /> : (
+            <>
+              <div>Bienvenido administrador</div>
+              <button onClick={handleLogout} disabled={isLoggingOut}>
+                {isLoggingOut ? <Loader /> : 'Cerrar sesión'}
+              </button>
+            </>
+          )}
+        </>
+      )}
     </div>
   );
 };
