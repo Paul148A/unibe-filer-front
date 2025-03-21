@@ -9,6 +9,7 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUserAuth | null>(null);
   const [loading, setLoading] = useState(true);
   const [userInfo, setUserInfo] = useState<IUser | null>(null);
+  const [openSidebar, setOpenSidebar] = useState<boolean>(false);
 
   const fetchUser = async () => {
     setLoading(true);
@@ -30,12 +31,16 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleSidebar = () => {
+    setOpenSidebar(!openSidebar);
+  }
+
   useEffect(() => {
     fetchUser();
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, refreshUser: fetchUser, setUser, userInfo, setLoading }}>
+    <AuthContext.Provider value={{ user, loading, refreshUser: fetchUser, setUser, userInfo, setLoading, handleSidebar, openSidebar }}>
       {children}
     </AuthContext.Provider>
   );

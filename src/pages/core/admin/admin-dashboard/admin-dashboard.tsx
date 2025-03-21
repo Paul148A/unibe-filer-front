@@ -4,6 +4,7 @@ import { logout } from '../../../../services/auth/login.service';
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../../../components/Loader/loader';
 import WelcomeView from '../../../../components/Welcome-view/welcome-view';
+
 const AdminDashboard = () => {
   const { refreshUser, setUser, user, loading } = useAuth();
   const navigate = useNavigate();

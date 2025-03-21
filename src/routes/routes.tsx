@@ -4,6 +4,7 @@ import Login from "../pages/auth/login/login";
 import AdminDashboard from "../pages/core/admin/admin-dashboard/admin-dashboard";
 import StudentDashboard from "../pages/core/student/student-dashboard/student-dashboard";
 import Unauthorized from "../components/Unauthorized/unauthorized";
+import Template from "../template/template";
 
 const AppRouter = () => {
   return (
@@ -13,11 +14,15 @@ const AppRouter = () => {
 
         {/* Rutas protegidas */}
         <Route element={<Auth allowedRoles={["admin"]} />}>
-          <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          <Route element={<Template />}>
+            <Route path="/admin-dashboard" element={<AdminDashboard />} />
+          </Route>
         </Route>
 
         <Route element={<Auth allowedRoles={["student"]} />}>
-          <Route path="/student-dashboard" element={<StudentDashboard />} />
+          <Route element={<Template />}>
+            <Route path="/student-dashboard" element={<StudentDashboard />} />
+          </Route>
         </Route>
 
         <Route path="/unauthorized" element={<Unauthorized />} />
