@@ -1,25 +1,22 @@
-import { Drawer, ListItemButton, ListItemIcon, Typography } from "@mui/material"
-import InboxIcon from '@mui/icons-material/Inbox';
-import { useAuth } from "../Context/context";
+import { Divider, Drawer} from "@mui/material"
+import UseSidebar from "./hooks/use-sidebar";
+import { IUser } from "../../interfaces/IUser";
 
-const Sidebar = () => {
+interface Props {
+    user: IUser | null,
+    handleSidebar: () => void,
+    openSidebar: boolean,
+}
 
-    const {
-        openSidebar,
-        handleSidebar
-    } = useAuth()
+const Sidebar = (props: Props) => {
+
+    const {sidebarAdminList, sidebarStudentList} = UseSidebar()
 
     return (
         <>
-            <Drawer open={openSidebar} onClose={() => handleSidebar()}>
-                <ListItemButton>
-                    <ListItemIcon>
-                        <InboxIcon />
-                    </ListItemIcon>
-                    <Typography variant="h6" noWrap>
-                        menu
-                    </Typography>
-                </ListItemButton>
+            <Drawer open={props.openSidebar} onClose={() => props.handleSidebar}>
+                <Divider />
+                {props.user?.role.name === "admin" ? sidebarAdminList : sidebarStudentList}
             </Drawer>
         </>
     )

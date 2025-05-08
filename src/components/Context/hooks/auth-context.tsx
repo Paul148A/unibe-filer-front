@@ -11,6 +11,18 @@ interface AuthContextType {
   setLoading: (loading: boolean) => void;
   handleSidebar: () => void;
   openSidebar: boolean;
+  openAlert: {
+    open: boolean;
+    type: "success" | "error" | "info" | "warning";
+    title: string;
+  };
+  setOpenAlert: (alert: {
+    open: boolean;
+    type: "success" | "error" | "info" | "warning";
+    title: string;
+  }) => void;
+  handleCloseAlert: () => void;
+  handleCloseSidebar: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

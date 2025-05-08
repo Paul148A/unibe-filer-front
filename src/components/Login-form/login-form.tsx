@@ -9,7 +9,7 @@ import Loader from '../Loader/loader';
 
 const LoginForm = () => {
   const { identification, password, handleIdentificationChange, handlePasswordChange, handleSubmit, loading } = UseLoginForm();
-  
+
   return (
     <Grid container justifyContent="center" alignItems="center" style={{ minHeight: '100vh' }}>
       <Card>
@@ -39,7 +39,13 @@ const LoginForm = () => {
                 />
               </Grid>
               <Grid size={12}>
-                <Button type="submit" variant="contained" color="primary" size='large' disabled={loading}>
+                <Button 
+                  type="submit" 
+                  variant="contained" 
+                  color="primary" 
+                  size='large' 
+                  disabled={loading} 
+                  >
                   {loading ? <Loader /> : 'Ingresar'}
                 </Button>
               </Grid>

@@ -9,6 +9,7 @@ const Navbar = () => {
     anchorEl,
     handleMenu,
     handleClose,
+    handleLogout,
   } = UseNavbar()
 
   const {
@@ -54,8 +55,8 @@ const Navbar = () => {
               open={Boolean(anchorEl)}
               onClose={handleClose}
             >
+              <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
               <MenuItem onClick={handleClose}>Profile</MenuItem>
-              <MenuItem onClick={handleClose}>My account</MenuItem>
             </Menu>
           </div>
         </Toolbar>

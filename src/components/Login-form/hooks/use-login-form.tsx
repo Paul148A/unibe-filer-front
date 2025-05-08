@@ -7,7 +7,7 @@ const UseLoginForm = () => {
   const [identification, setIdentification] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { refreshUser, user, loading, setLoading } = useAuth();
+  const { refreshUser, user, loading, setLoading, setOpenAlert } = useAuth();
 
   useEffect(() => {
     if (user) {
@@ -35,7 +35,8 @@ const UseLoginForm = () => {
       await refreshUser();
       setLoading(false);
     } catch (error) {
-      console.error("Error en login:", error);
+      setOpenAlert({ open: true, type: "error", title: "Usuario y/o contraseña no válidos" });
+      console.error("Login failed:", error);
       setLoading(false);
     }
   };
@@ -47,6 +48,7 @@ const UseLoginForm = () => {
     handlePasswordChange,
     handleSubmit,
     loading,
+    setOpenAlert,
   };
 };
 

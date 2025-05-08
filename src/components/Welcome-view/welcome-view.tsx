@@ -4,7 +4,6 @@ import { Typography } from "@mui/material";
 
 const WelcomeView = () => {
     const { userInfo } = useAuth();
-    console.log(userInfo?.names);
   
     return (
       <div className="welcome-container">
