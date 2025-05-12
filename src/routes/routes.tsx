@@ -8,6 +8,9 @@ import Template from "../template/template";
 import UploadInscriptionDocuments from "../pages/core/student/upload-inscription-documents/upload-inscription-documents";
 import UploadPersonalDocuments from "../pages/core/student/upload-personal-documents/upload-personal-documents";
 import UploadDegreeDocuments from "../pages/core/student/upload-degree-documents/upload-degree-documents";
+import ListPersonalDocuments from "../pages/core/student/upload-personal-documents/list-personal-documents";
+import ListInscriptionDocuments from "../pages/core/student/upload-inscription-documents/list-inscription-documents";
+import ListDegreeDocuments from "../pages/core/student/upload-degree-documents/list-degree-documents";
 
 const AppRouter = () => {
   return (
@@ -24,9 +27,18 @@ const AppRouter = () => {
         {/* Student */}
           <Route element={<Auth allowedRoles={["student"]} />}>
             <Route path="/student-dashboard" element={<StudentDashboard />} />
+            
+            {/* Rutas documentos de inscripcion */}
             <Route path="/upload-inscription-documents" element={<UploadInscriptionDocuments />} />
-            <Route path="/upload-personal-documents" element={<UploadPersonalDocuments />} />
+            <Route path="/list-inscription-documents" element={<ListInscriptionDocuments />} />
+            
+            {/* Rutas documentos de grado */}
             <Route path="/upload-degree-documents" element={<UploadDegreeDocuments />} />
+            <Route path="/list-degree-documents" element={<ListDegreeDocuments />} />
+            
+            {/* Rutas documentos personales */}
+            <Route path="/upload-personal-documents" element={<UploadPersonalDocuments />} />
+            <Route path="/list-personal-documents" element={<ListPersonalDocuments />} />
           </Route>
         </Route>
 
