@@ -6,7 +6,7 @@ const StudentDashboard = () => {
     <>
       <Grid2 container sx={{ marginBottom: 1 }}>
         <Grid2 size={12}>
-          <img src="/dashimg.jpg" alt="" width="100%" height={220} />
+          <img src="/dashimg.jpg" alt="" width="100%" height={240} />
         </Grid2>
       </Grid2>
       <Grid2 container sx={{

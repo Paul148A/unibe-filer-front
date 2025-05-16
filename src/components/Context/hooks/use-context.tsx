@@ -41,13 +41,13 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
     setOpenAlert({ ...openAlert, open: false });
   };
 
-  const handleSidebar = () => {
-    setOpenSidebar(!openSidebar);
+  const handleCloseSidebar = (open: boolean) => {
+    setOpenSidebar(open);
   }
 
-  const handleCloseSidebar = () => {
-    setOpenSidebar(false);
-  }
+  const handleSidebar = () => {
+    setOpenSidebar(true);
+  };
 
   useEffect(() => {
     fetchUser();
@@ -61,12 +61,13 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
       setUser,
       userInfo,
       setLoading,
-      handleSidebar,
       openSidebar,
       openAlert,
       setOpenAlert,
       handleCloseAlert,
       handleCloseSidebar,
+      setOpenSidebar,
+      handleSidebar,
     }}>
       {children}
     </AuthContext.Provider>

@@ -11,6 +11,9 @@ import UploadDegreeDocuments from "../pages/core/student/upload-degree-documents
 import ListPersonalDocuments from "../pages/core/student/upload-personal-documents/list-personal-documents";
 import ListInscriptionDocuments from "../pages/core/student/upload-inscription-documents/list-inscription-documents";
 import ListDegreeDocuments from "../pages/core/student/upload-degree-documents/list-degree-documents";
+import StudentForm from "../pages/core/admin/manage-students/students-form";
+import StudentsList from "../pages/core/admin/manage-students/students-list";
+import RecordsList from "../pages/core/admin/records/records-list";
 
 const AppRouter = () => {
   return (
@@ -22,6 +25,13 @@ const AppRouter = () => {
         <Route element={<Template />}>
           <Route element={<Auth allowedRoles={["admin"]} />}>
             <Route path="/admin-dashboard" element={<AdminDashboard />} />
+
+            {/* Rutas manejo de estudiantes */}
+            <Route path="/students-form" element={<StudentForm />} />
+            <Route path="/students-list" element={<StudentsList />} />
+
+            {/* Rutas expedientes estudiantiles */}
+            <Route path="/records-list" element={<RecordsList />} />
           </Route>
           
         {/* Student */}

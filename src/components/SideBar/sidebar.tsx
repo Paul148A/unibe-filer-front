@@ -4,7 +4,7 @@ import { IUser } from "../../interfaces/IUser";
 
 interface Props {
     user: IUser | null,
-    handleSidebar: () => void,
+    handleSidebar: (open: boolean) => void,
     openSidebar: boolean,
 }
 
@@ -14,7 +14,7 @@ const Sidebar = (props: Props) => {
 
     return (
         <>
-            <Drawer open={props.openSidebar} onClose={() => props.handleSidebar}>
+            <Drawer open={props.openSidebar} onClose={() => props.handleSidebar(false)}>
                 <Divider />
                 {props.user?.role.name === "admin" ? sidebarAdminList : sidebarStudentList}
             </Drawer>

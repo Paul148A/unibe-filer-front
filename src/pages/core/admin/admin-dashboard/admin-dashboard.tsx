@@ -1,58 +1,37 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../../../../components/Context/context';
-import { logout } from '../../../../services/auth/login.service';
-import { useNavigate } from 'react-router-dom';
-import Loader from '../../../../components/Loader/loader';
-import WelcomeView from '../../../../components/Welcome-view/welcome-view';
+import { Grid2 } from '@mui/material';
+import Section from '../../../../components/Section/section';
 
 const AdminDashboard = () => {
-  const { refreshUser, setUser, user, loading } = useAuth();
-  const navigate = useNavigate();
-  const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const [showWelcome, setShowWelcome] = useState(true);
-
-  const handleLogout = async () => {
-    try {
-      setIsLoggingOut(true);
-      await logout();
-      setUser(null);
-      await refreshUser();
-    } catch (error) {
-      console.error('Error al cerrar sesión:', error);
-      setIsLoggingOut(false);
-    }
-  };
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowWelcome(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    if (isLoggingOut && !user) {
-      navigate('/');
-    }
-  }, [isLoggingOut, user, navigate]);
-
   return (
-    <div>
-      {loading ? <Loader /> : (
-        <>
-          {showWelcome ? <WelcomeView /> : (
-            <>
-              <div>Bienvenido administrador</div>
-              <button onClick={handleLogout} disabled={isLoggingOut}>
-                {isLoggingOut ? <Loader /> : 'Cerrar sesión'}
-              </button>
-            </>
-          )}
-        </>
-      )}
-    </div>
-  );
-};
+    <>
+      <Grid2 container sx={{ marginBottom: 1 }}>
+        <Grid2 size={12}>
+          <img src="/dashimg.jpg" alt="" width="100%" height={240} />
+        </Grid2>
+      </Grid2>
+      <Grid2 container sx={{
+        justifyContent: "center",
+        alignItems: "center",
+      }}>
+        <Grid2 size={4}>
+          <Section
+            img="/inscriptionimg.png"
+            link="/students-list"
+            title="Consulta de estudiantes"
+            description="Consulta los estudiantes de la UNIBE y registra a los de nuevo ingreso."
+          />
+        </Grid2>
+        <Grid2 size={4}>
+          <Section
+            img="/personalimg.png"
+            link="/records-list"
+            title="Expedientes"
+            description="Consulta los expedientes electronicos estudiantiles y gestiona sus documentos."
+          />
+        </Grid2>
+      </Grid2>
+    </>
+  )
+}
 
 export default AdminDashboard;

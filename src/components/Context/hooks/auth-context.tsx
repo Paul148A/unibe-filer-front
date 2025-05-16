@@ -9,7 +9,6 @@ interface AuthContextType {
   setUser: (user: IUserAuth | null) => void;
   userInfo: IUser | null;
   setLoading: (loading: boolean) => void;
-  handleSidebar: () => void;
   openSidebar: boolean;
   openAlert: {
     open: boolean;
@@ -22,7 +21,9 @@ interface AuthContextType {
     title: string;
   }) => void;
   handleCloseAlert: () => void;
-  handleCloseSidebar: () => void;
+  handleCloseSidebar: (open: boolean) => void;
+  setOpenSidebar: (open: boolean) => void;
+  handleSidebar: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

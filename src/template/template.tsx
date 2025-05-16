@@ -4,7 +4,7 @@ import Sidebar from "../components/SideBar/sidebar"
 import { useAuth } from "../components/Context/context"
 
 const Template = () => {
-    const {userInfo, openSidebar, handleCloseSidebar} = useAuth();
+    const {userInfo, openSidebar ,handleCloseSidebar} = useAuth();
     return (
         <div>
             <Navbar />

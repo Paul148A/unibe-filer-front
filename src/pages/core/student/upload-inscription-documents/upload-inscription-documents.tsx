@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAlert } from '../../../../components/Context/AlertContext';
 import '../../../../styles/upload-documents.css';
+import { useAuth } from '../../../../components/Context/context';
 
 const UploadInscriptionDocuments: React.FC = () => {
   const [registrationDoc, setRegistrationDoc] = useState<File | null>(null);
@@ -12,15 +12,15 @@ const UploadInscriptionDocuments: React.FC = () => {
   const [enrollmentCertificateDoc, setEnrollmentCertificateDoc] = useState<File | null>(null);
   const [approvalDoc, setApprovalDoc] = useState<File | null>(null);
   const [message] = useState('');
-  const { showAlert } = useAlert();
   const navigate = useNavigate();
+  const { setOpenAlert } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!registrationDoc || !semesterGradeChartDoc || !reEntryDoc || 
         !englishCertificateDoc || !enrollmentCertificateDoc || !approvalDoc) {
-      showAlert('Debes subir todos los archivos requeridos', 'error');
+      setOpenAlert({ open: true, type: "error", title: "Debes subir todos los archivos del formulario" });
       return;
     }
 
@@ -34,12 +34,12 @@ const UploadInscriptionDocuments: React.FC = () => {
 
     try {
       const response = await axios.post('http://localhost:3000/files/upload-inscription-form', formData);
-      showAlert(response.data.message, 'success');
+      setOpenAlert({open: true, type: "success", title: "Documentos registrados correctamente" + response.data.message});
       setTimeout(() => {
         navigate('/list-inscription-documents');
       }, 1500);
-    } catch (error: any) {
-      showAlert(error.response?.data?.message || 'Error al subir los documentos', 'error');
+    } catch (error) {
+      setOpenAlert({ open: true, type: "error", title: "Error al subir los documentos" + error });
     }
   };
 
