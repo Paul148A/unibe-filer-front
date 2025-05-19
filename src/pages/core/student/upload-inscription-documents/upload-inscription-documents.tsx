@@ -1,8 +1,46 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import '../../../../styles/upload-documents.css';
 import { useAuth } from '../../../../components/Context/context';
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  styled,
+  Alert,
+  Stack
+} from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import {
+  Assignment as AssignmentIcon,
+  Grade as GradeIcon,
+  Replay as ReplayIcon,
+  Translate as TranslateIcon,
+  HowToReg as HowToRegIcon,
+  Verified as VerifiedIcon,
+} from '@mui/icons-material';
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  marginTop: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[3],
+  maxWidth: 800,
+  margin: '0 auto'
+}));
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const UploadInscriptionDocuments: React.FC = () => {
   const [registrationDoc, setRegistrationDoc] = useState<File | null>(null);
@@ -34,77 +72,149 @@ const UploadInscriptionDocuments: React.FC = () => {
 
     try {
       const response = await axios.post('http://localhost:3000/files/upload-inscription-form', formData);
-      setOpenAlert({open: true, type: "success", title: "Documentos registrados correctamente" + response.data.message});
+      setOpenAlert({open: true, type: "success", title: "" + response.data.message});
       setTimeout(() => {
         navigate('/list-inscription-documents');
       }, 1500);
     } catch (error) {
-      setOpenAlert({ open: true, type: "error", title: "Error al subir los documentos" + error });
+      setOpenAlert({ open: true, type: "error", title: "" + error });
     }
   };
 
   return (
-    <div className="upload-documents-container">
-      <h2 className="upload-documents-title">Subir Documentos de Inscripción</h2>
-      <form className="upload-documents-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Documento de Registro:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setRegistrationDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Boletín de Notas:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setSemesterGradeChartDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Documento de Reingreso:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setReEntryDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Certificado de Inglés:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setEnglishCertificateDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Certificado de Matrícula:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setEnrollmentCertificateDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Documento de Aprobación:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setApprovalDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <button type="submit" className="submit-button">Subir Documentos</button>
-      </form>
-      {message && <p className="message">{message}</p>}
-    </div>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" component="h2" gutterBottom align="center">
+        Subir Documentos de Inscripción
+      </Typography>
+      
+      <StyledPaper>
+        <Stack component="form" onSubmit={handleSubmit} spacing={3}>
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<AssignmentIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Documento de Registro
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setRegistrationDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {registrationDoc && (
+            <Alert severity="success">{registrationDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<GradeIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Papeleta de Notas
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setSemesterGradeChartDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {semesterGradeChartDoc && (
+            <Alert severity="success">{semesterGradeChartDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<ReplayIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Documento de Reingreso
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setReEntryDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {reEntryDoc && (
+            <Alert severity="success">{reEntryDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<TranslateIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Certificado de Inglés
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setEnglishCertificateDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {englishCertificateDoc && (
+            <Alert severity="success">{englishCertificateDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<HowToRegIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Certificado de Matrícula
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setEnrollmentCertificateDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {enrollmentCertificateDoc && (
+            <Alert severity="success">{enrollmentCertificateDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<VerifiedIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Documento de Aprobación
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setApprovalDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {approvalDoc && (
+            <Alert severity="success">{approvalDoc.name}</Alert>
+          )}
+
+          <Button 
+            type="submit" 
+            variant="contained" 
+            size="large" 
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Subir Documentos
+          </Button>
+        </Stack>
+      </StyledPaper>
+      
+      {message && (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {message}
+        </Alert>
+      )}
+    </Box>
   );
 };
 
