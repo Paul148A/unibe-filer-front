@@ -1,8 +1,48 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { useAlert } from '../../../../components/Context/AlertContext';
-import '../../../../styles/upload-documents.css';
+import { useAuth } from '../../../../components/Context/context';
+import {
+  Box,
+  Typography,
+  Button,
+  Paper,
+  styled,
+  Alert,
+  Stack
+} from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import {
+  AssignmentInd as AssignmentIndIcon,
+  Grading as GradingIcon,
+  Plagiarism as PlagiarismIcon,
+  Mail as MailIcon,
+  School as SchoolIcon,
+  CheckCircle as CheckCircleIcon,
+  Receipt as ReceiptIcon,
+  MoneyOff as MoneyOffIcon
+} from '@mui/icons-material';
+
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(4),
+  marginTop: theme.spacing(2),
+  borderRadius: theme.shape.borderRadius,
+  boxShadow: theme.shadows[3],
+  maxWidth: 800,
+  margin: '0 auto'
+}));
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
+});
 
 const UploadDegreeDocuments: React.FC = () => {
   const [topicComplainDoc, setTopicComplainDoc] = useState<File | null>(null);
@@ -14,7 +54,7 @@ const UploadDegreeDocuments: React.FC = () => {
   const [electiveGrade, setElectiveGrade] = useState<File | null>(null);
   const [academicClearance, setAcademicClearance] = useState<File | null>(null);
   const [message] = useState('');
-  const { showAlert } = useAlert();
+  const { setOpenAlert } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -23,7 +63,7 @@ const UploadDegreeDocuments: React.FC = () => {
     if (!topicComplainDoc || !topicApprovalDoc || !tutorAssignmentDoc || 
         !tutorFormatDoc || !antiplagiarismDoc || !tutorLetter || 
         !electiveGrade || !academicClearance) {
-      showAlert('Debes subir todos los archivos requeridos', 'error');
+      setOpenAlert({ open: true, type: "error", title: "Debes subir todos los archivos del formulario" });
       return;
     }
 
@@ -39,95 +79,185 @@ const UploadDegreeDocuments: React.FC = () => {
 
     try {
       const response = await axios.post('http://localhost:3000/files/upload-degree', formData);
-      showAlert(response.data.message, 'success');
+      setOpenAlert({open: true, type: "success", title: "" + response.data.message});
       setTimeout(() => {
         navigate('/list-degree-documents');
       }, 1500);
     } catch (error: any) {
-      showAlert(error.response?.data?.message || 'Error al subir los documentos', 'error');
+      setOpenAlert({ open: true, type: "error", title: "" + error });
     }
   };
 
   return (
-    <div className="upload-documents-container">
-      <h2 className="upload-documents-title">Subir Documentos de Grado</h2>
-      <form className="upload-documents-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Solicitud de Tema:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setTopicComplainDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Aprobación de Tema:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setTopicApprovalDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Asignación de Tutor:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setTutorAssignmentDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Formato de Tutor:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setTutorFormatDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Antiplagio:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setAntiplagiarismDoc(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Carta de Tutor:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setTutorLetter(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Nota Electivo:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setElectiveGrade(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <div className="form-group">
-          <label>Libre de Deuda:</label>
-          <input 
-            type="file" 
-            accept="application/pdf" 
-            onChange={(e) => setAcademicClearance(e.target.files?.[0] || null)} 
-            className="file-input"
-          />
-        </div>
-        <button type="submit" className="submit-button">Subir Documentos</button>
-      </form>
-      {message && <p className="message">{message}</p>}
-    </div>
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" component="h2" gutterBottom align="center">
+        Subir Documentos de Grado
+      </Typography>
+      
+      <StyledPaper>
+        <Stack component="form" onSubmit={handleSubmit} spacing={3}>
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<ReceiptIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Solicitud de Tema
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setTopicComplainDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {topicComplainDoc && (
+            <Alert severity="success">{topicComplainDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<CheckCircleIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Aprobación de Tema
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setTopicApprovalDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {topicApprovalDoc && (
+            <Alert severity="success">{topicApprovalDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<AssignmentIndIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Asignación de Tutor
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setTutorAssignmentDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {tutorAssignmentDoc && (
+            <Alert severity="success">{tutorAssignmentDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<GradingIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Formato de Tutor
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setTutorFormatDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {tutorFormatDoc && (
+            <Alert severity="success">{tutorFormatDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<PlagiarismIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Antiplagio
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setAntiplagiarismDoc(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {antiplagiarismDoc && (
+            <Alert severity="success">{antiplagiarismDoc.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<MailIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Carta de Tutor
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setTutorLetter(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {tutorLetter && (
+            <Alert severity="success">{tutorLetter.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<SchoolIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Nota Electivo
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setElectiveGrade(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {electiveGrade && (
+            <Alert severity="success">{electiveGrade.name}</Alert>
+          )}
+
+          <Button
+            component="label"
+            variant="outlined"
+            startIcon={<MoneyOffIcon />}
+            endIcon={<CloudUploadIcon />}
+            fullWidth
+          >
+            Libre de Deuda
+            <VisuallyHiddenInput 
+              type="file" 
+              accept="application/pdf" 
+              onChange={(e) => setAcademicClearance(e.target.files?.[0] || null)} 
+            />
+          </Button>
+          {academicClearance && (
+            <Alert severity="success">{academicClearance.name}</Alert>
+          )}
+
+          <Button 
+            type="submit" 
+            variant="contained" 
+            size="large" 
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Subir Documentos
+          </Button>
+        </Stack>
+      </StyledPaper>
+      
+      {message && (
+        <Alert severity="info" sx={{ mt: 2 }}>
+          {message}
+        </Alert>
+      )}
+    </Box>
   );
 };
 

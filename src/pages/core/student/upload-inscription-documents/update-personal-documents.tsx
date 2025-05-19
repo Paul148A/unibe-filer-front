@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { InscriptionDocument } from '../../../../interfaces/IInscriptionDocument';
-import { useAlert } from '../../../../components/Context/AlertContext';
+import { useAuth } from '../../../../components/Context/context';
 import '../../../../styles/update-documents.css';
 
 interface UpdateInscriptionDocumentsModalProps {
@@ -24,7 +24,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
     approvalDoc?: File;
   }>({});
   const [isUpdating, setIsUpdating] = useState(false);
-  const { showAlert } = useAlert();
+  const { setOpenAlert } = useAuth();
 
   const handleFileChange = (field: keyof typeof files) => 
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +38,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
     e.preventDefault();
     
     if (Object.keys(files).length === 0) {
-      showAlert('Debes seleccionar al menos un documento para actualizar', 'warning');
+      setOpenAlert({ open: true, type: "error", title: "Debes subir todos los archivos del formulario" });
       return;
     }
 
@@ -62,11 +62,11 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
           }
         }
       );
-      showAlert('Documentos actualizados correctamente', 'success');
+      setOpenAlert({open: true, type: "success", title: "Documentos actualizados correctamente"});
       onUpdate();
       onClose();
     } catch (error: any) {
-      showAlert(error.response?.data?.message || 'Error al actualizar los documentos', 'error');
+      setOpenAlert({ open: true, type: "error", title: "Error al actualizar los documentos" + error });
     } finally {
       setIsUpdating(false);
     }

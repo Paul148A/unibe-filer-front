@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { IDegreeDocument } from '../../../../interfaces/IDegreeDocument';
-import { useAlert } from '../../../../components/Context/AlertContext';
+import { useAuth } from '../../../../components/Context/context';
 import '../../../../styles/update-documents.css';
 
 interface UpdateDegreeDocumentsModalProps {
@@ -26,7 +26,7 @@ const UpdateDegreeDocumentsModal: React.FC<UpdateDegreeDocumentsModalProps> = ({
     academicClearance?: File;
   }>({});
   const [isUpdating, setIsUpdating] = useState(false);
-  const { showAlert } = useAlert();
+  const { setOpenAlert } = useAuth();
 
   const handleFileChange = (field: keyof typeof files) => 
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +40,7 @@ const UpdateDegreeDocumentsModal: React.FC<UpdateDegreeDocumentsModalProps> = ({
     e.preventDefault();
     
     if (Object.keys(files).length === 0) {
-      showAlert('Debes seleccionar al menos un documento para actualizar', 'warning');
+      setOpenAlert({ open: true, type: "error", title: "Debes subir todos los archivos del formulario" });
       return;
     }
 
@@ -66,11 +66,11 @@ const UpdateDegreeDocumentsModal: React.FC<UpdateDegreeDocumentsModalProps> = ({
           }
         }
       );
-      showAlert('Documentos actualizados correctamente', 'success');
+      setOpenAlert({open: true, type: "success", title: "Documentos actualizados correctamente"});
       onUpdate();
       onClose();
     } catch (error: any) {
-      showAlert(error.response?.data?.message || 'Error al actualizar los documentos', 'error');
+      setOpenAlert({ open: true, type: "error", title: "Error al actualizar los documentos" + error });
     } finally {
       setIsUpdating(false);
     }
