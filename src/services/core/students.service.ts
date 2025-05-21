@@ -3,9 +3,15 @@ import { IUser } from "../../interfaces/IUser";
 
 const ENDPOINT = 'api1/users';
 
+interface GetUsersResponse {
+  data: IUser[];
+  message: string;
+  title: string;
+}
+
 export const getAllUsers = async (): Promise<IUser[]> => {
-  const response = await axiosInstance.get<IUser[]>(ENDPOINT);
-  return response.data;
+  const response = await axiosInstance.get<GetUsersResponse>(ENDPOINT);
+  return response.data.data;
 };
 
 export const getUsersByRole = async (role: string): Promise<IUser[]> => {

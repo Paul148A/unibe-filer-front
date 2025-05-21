@@ -69,7 +69,7 @@ const UpdateDegreeDocumentsModal: React.FC<UpdateDegreeDocumentsModalProps> = ({
       setOpenAlert({open: true, type: "success", title: "Documentos actualizados correctamente"});
       onUpdate();
       onClose();
-    } catch (error: any) {
+    } catch (error) {
       setOpenAlert({ open: true, type: "error", title: "Error al actualizar los documentos" + error });
     } finally {
       setIsUpdating(false);

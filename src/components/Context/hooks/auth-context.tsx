@@ -4,11 +4,11 @@ import { IUser } from "../../../interfaces/IUser";
 
 interface AuthContextType {
   user: IUserAuth | null;
-  loading: boolean;
+  authLoading: boolean;
   refreshUser: () => Promise<void>;
   setUser: (user: IUserAuth | null) => void;
   userInfo: IUser | null;
-  setLoading: (loading: boolean) => void;
+  setAuthLoading: (loading: boolean) => void;
   openSidebar: boolean;
   openAlert: {
     open: boolean;
@@ -24,6 +24,8 @@ interface AuthContextType {
   handleCloseSidebar: (open: boolean) => void;
   setOpenSidebar: (open: boolean) => void;
   handleSidebar: () => void;
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

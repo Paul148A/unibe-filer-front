@@ -1,12 +1,11 @@
-import { Button, Stack } from '@mui/material';
+import { Button, IconButton, Stack } from '@mui/material';
 import { useCallback } from 'react';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export type ActionKey =
-  | 'Editar'
-  | 'Eliminar'
-  | 'VisualizarPDF'
-  | 'RechazarDocumento'
-  | 'AprobarDocumento';
+  | 'EditarUsuario'
+  | 'EliminarUsuario'
+  | 'VerUsuario';
 
 export type Column<T> = {
   key: keyof T | string;
@@ -21,30 +20,15 @@ export function useCustomTable<T>(actions?: ActionKey[]) {
 
       return (
         <Stack direction="row" spacing={1}>
-          {actions.includes('Editar') && (
+          {actions.includes('EditarUsuario') && (
             <Button size="small" onClick={() => console.log('Editar', row)}>
               Editar
             </Button>
           )}
-          {actions.includes('Eliminar') && (
-            <Button size="small" color="error" onClick={() => console.log('Eliminar', row)}>
-              Eliminar
-            </Button>
-          )}
-          {actions.includes('VisualizarPDF') && (
-            <Button size="small" onClick={() => console.log('Ver PDF', row)}>
-              Ver PDF
-            </Button>
-          )}
-          {actions.includes('RechazarDocumento') && (
-            <Button size="small" color="warning" onClick={() => console.log('Rechazar', row)}>
-              Rechazar
-            </Button>
-          )}
-          {actions.includes('AprobarDocumento') && (
-            <Button size="small" color="success" onClick={() => console.log('Aprobar', row)}>
-              Aprobar
-            </Button>
+          {actions.includes('EliminarUsuario') && (
+            <IconButton size="large" onClick={() => console.log('Eliminar', row)}>
+              <DeleteIcon fontSize="inherit" />
+            </IconButton>
           )}
         </Stack>
       );
