@@ -25,7 +25,7 @@ const CustomTable = <T,>({
     <TableContainer>
       <Table>
         <TableHead>
-          <TableRow>
+          <TableRow sx={{ backgroundColor: 'primary.main' }}>
             {columns.map((column, index) => (
               <TableCell key={index}>{column.label}</TableCell>
             ))}

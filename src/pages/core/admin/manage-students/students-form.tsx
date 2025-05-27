@@ -92,7 +92,7 @@ const StudentsForm = () => {
         return;
       }
 
-      await axios.post('http://localhost:3000/users', formData);
+      await axios.post('http://localhost:3000/api1/users', formData);
       setOpenAlert({ open: true, type: "success", title: "Usuario creado con éxito" });
       
       // Resetear el formulario

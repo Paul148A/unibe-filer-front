@@ -29,6 +29,14 @@ const AdminDashboard = () => {
             description="Consulta los expedientes electronicos estudiantiles y gestiona sus documentos."
           />
         </Grid2>
+        <Grid2 size={4}>
+          <Section
+            img="/personalimg.png"
+            link="/students-form"
+            title="Registro de estudiantes"
+            description="Consulta los expedientes electronicos estudiantiles y gestiona sus documentos."
+          />
+        </Grid2>
       </Grid2>
     </>
   )
