@@ -1,6 +1,7 @@
 import { createContext } from "react";
 import { IUserAuth } from "../../../interfaces/IUserAuth";
 import { IUser } from "../../../interfaces/IUser";
+import { IRecord } from "../../../interfaces/IRecord";
 
 interface AuthContextType {
   user: IUserAuth | null;
@@ -26,6 +27,7 @@ interface AuthContextType {
   handleSidebar: () => void;
   loading: boolean;
   setLoading: (loading: boolean) => void;
+  record: IRecord | null;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);

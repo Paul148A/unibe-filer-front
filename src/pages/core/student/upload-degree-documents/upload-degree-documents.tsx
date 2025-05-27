@@ -54,7 +54,7 @@ const UploadDegreeDocuments: React.FC = () => {
   const [electiveGrade, setElectiveGrade] = useState<File | null>(null);
   const [academicClearance, setAcademicClearance] = useState<File | null>(null);
   const [message] = useState('');
-  const { setOpenAlert } = useAuth();
+  const { setOpenAlert, record } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -76,6 +76,7 @@ const UploadDegreeDocuments: React.FC = () => {
     formData.append('tutor_letter', tutorLetter);
     formData.append('elective_grade', electiveGrade);
     formData.append('academic_clearance', academicClearance);
+    formData.append('record_id', record?.id || '');
 
     try {
       const response = await axios.post('http://localhost:3000/files/upload-degree', formData);

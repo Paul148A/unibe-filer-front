@@ -5,6 +5,8 @@ import { AuthContext } from "./auth-context";
 import { IUserAuth } from "../../../interfaces/IUserAuth";
 import { IUser } from "../../../interfaces/IUser";
 import { AlertColor } from "@mui/material";
+import { IRecord } from "../../../interfaces/IRecord";
+import { getRecordById } from "../../../services/upload-files/record.service";
 
 export const UseContext = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUserAuth | null>(null);
@@ -17,6 +19,7 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
     title: "",
   });
   const [loading, setLoading] = useState(false);
+  const [record, setRecord] = useState<IRecord | null>(null);
 
   const fetchUser = async () => {
     setAuthLoading(true);
@@ -24,12 +27,19 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
       const response = await axios.get(`${IGlobal.BACK_ROUTE}/auth/check-auth`, {
         withCredentials: true,
       });
-      console.log("User response:", response.data);
       const userInfo = await axios.get(`${IGlobal.BACK_ROUTE}/api1/users/${response.data.user.id}`, {
         withCredentials: true,
       });
+
+      const record = await getRecordById(response.data.user.id);
+
       setUser(response.data.user);
       setUserInfo(userInfo.data.data);
+      if (response.data.user.role.name === "student") {
+        setRecord(record[0]);
+      } else {
+        setRecord(null);
+      }
       setAuthLoading(false);
     } catch (error) {
       console.error("Error al verificar autenticación:", error);
@@ -71,6 +81,7 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
     handleSidebar,
     loading,
     setLoading,
+    record,
   }), [
     user,
     authLoading,
@@ -81,11 +92,12 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
     setAuthLoading,
     loading,
     setLoading,
+    record,
   ]);
 
   return (
-  <AuthContext.Provider value={contextValue}>
-    {children}
-  </AuthContext.Provider>
-);
+    <AuthContext.Provider value={contextValue}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
