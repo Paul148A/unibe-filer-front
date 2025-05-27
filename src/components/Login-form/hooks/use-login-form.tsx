@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../../services/auth/login.service";
 import { useAuth } from "../../Context/context";
+import { getAllRoles } from "../../../services/auth/role.service";
+import { IRole } from "../../../interfaces/IRole";
 
 const UseLoginForm = () => {
   const [identification, setIdentification] = useState("");
@@ -11,10 +13,33 @@ const UseLoginForm = () => {
 
   useEffect(() => {
     if (user) {
-      if (user.role === "admin") {
-        navigate("/admin-dashboard");
-      } else if (user.role === "student") {
-        navigate("/student-dashboard");
+      try {
+        const fetchRoles = async () => {
+          const roles: IRole[] = await getAllRoles();
+          console.log("Roles fetched:", roles);
+          console.log("Current user:", user);
+          const userRole = roles.find(role => role.name == user.role);
+          console.log("User role found:", userRole);
+          if (userRole) {
+            switch (userRole.description) {
+              case "Administrador":
+                navigate("/admin-dashboard");
+                break;
+              case "Estudiante":
+                navigate("/student-dashboard");
+                break;
+              default:
+                navigate("/");
+            }
+          } else {
+            console.error("User role not found");
+            navigate("/");
+          }
+        };
+
+        fetchRoles();
+      } catch (error) {
+        console.error("Navigation error:", error);
       }
     }
   }, [user, navigate]);

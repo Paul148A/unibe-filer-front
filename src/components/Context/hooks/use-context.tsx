@@ -24,6 +24,7 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
       const response = await axios.get(`${IGlobal.BACK_ROUTE}/auth/check-auth`, {
         withCredentials: true,
       });
+      console.log("User response:", response.data);
       const userInfo = await axios.get(`${IGlobal.BACK_ROUTE}/api1/users/${response.data.user.id}`, {
         withCredentials: true,
       });

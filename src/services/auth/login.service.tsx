@@ -33,7 +33,7 @@ export const logout = async () => {
             `${IGlobal.BACK_ROUTE}/auth/logout`,
             {},
             {
-                withCredentials: true  // importante para manejar cookies
+                withCredentials: true
             }
         );
         
