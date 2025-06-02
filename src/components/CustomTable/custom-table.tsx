@@ -11,6 +11,8 @@ interface Props<T> {
   columns: Column<T>[];
   actionKeys?: ActionKey[];
   renderActions?: (row: T) => React.ReactNode;
+  onEditClick?: (row: T) => void;
+  onDeleteClick?: (row: T) => void;
 }
 
 const CustomTable = <T,>({
@@ -18,8 +20,10 @@ const CustomTable = <T,>({
   columns,
   actionKeys,
   renderActions,
+  onEditClick,
+  onDeleteClick,
 }: Props<T>) => {
-  const getActions = useCustomTable<T>(actionKeys);
+  const getActions = useCustomTable<T>(actionKeys, onEditClick, onDeleteClick);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
