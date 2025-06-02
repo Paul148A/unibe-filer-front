@@ -56,7 +56,7 @@ const StudentsList = () => {
               value && typeof value === "object" ? value.description : "-",
           },
         ]}
-        actionKeys={["EditarUsuario", "EliminarUsuario", "VerUsuario"]}
+        actionKeys={["EditarUsuario", "EliminarUsuario", "VisualizarPdf"]}
       />
     </>
   );

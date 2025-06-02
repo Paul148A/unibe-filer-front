@@ -18,3 +18,8 @@ export const getRecordById = async (id: string): Promise<IRecord[]> => {
   const response = await axiosInstance.get<GetRolesResponse>(`${ENDPOINT}/${id}`);
   return response.data.data;
 };
+
+export const getRecordByUserId = async (userId: string): Promise<IRecord[]> => {
+  const response = await axiosInstance.get<GetRolesResponse>(`${ENDPOINT}/user/${userId}`);
+  return response.data.data;
+}

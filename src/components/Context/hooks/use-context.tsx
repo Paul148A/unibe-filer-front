@@ -6,7 +6,7 @@ import { IUserAuth } from "../../../interfaces/IUserAuth";
 import { IUser } from "../../../interfaces/IUser";
 import { AlertColor } from "@mui/material";
 import { IRecord } from "../../../interfaces/IRecord";
-import { getRecordById } from "../../../services/upload-files/record.service";
+import { getRecordByUserId } from "../../../services/upload-files/record.service";
 
 export const UseContext = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<IUserAuth | null>(null);
@@ -31,11 +31,11 @@ export const UseContext = ({ children }: { children: ReactNode }) => {
         withCredentials: true,
       });
 
-      const record = await getRecordById(response.data.user.id);
-
       setUser(response.data.user);
       setUserInfo(userInfo.data.data);
+
       if (response.data.user.role.name === "student") {
+        const record = await getRecordByUserId(response.data.user.id);
         setRecord(record[0]);
       } else {
         setRecord(null);
