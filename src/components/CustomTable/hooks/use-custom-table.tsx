@@ -8,7 +8,8 @@ export type ActionKey =
   | 'EditarUsuario'
   | 'EliminarUsuario'
   | 'VerUsuario'
-  | 'VisualizarPdf';
+  | 'VisualizarPdf'
+  | 'DescargarExpediente';
 
 export type Column<T> = {
   key: keyof T | string;
@@ -35,6 +36,11 @@ export function useCustomTable<T>(actions?: ActionKey[]) {
           )}
           {actions.includes('VisualizarPdf') && (
             <Button size="small" sx={{backgroundColor: 'yellow'}} onClick={() => console.log('Editar', row)}>
+              <VisibilityIcon sx={{color: 'white'}} />
+            </Button>
+          )}
+          {actions.includes('DescargarExpediente') && (
+            <Button size="small" sx={{backgroundColor: 'green'}} onClick={() => console.log('Descargar', row)}>
               <VisibilityIcon sx={{color: 'white'}} />
             </Button>
           )}
