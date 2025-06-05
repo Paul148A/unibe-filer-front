@@ -66,7 +66,7 @@ export function useCustomTable<T>(
             </Button>
           )}
           {actions.includes('EditarDocumentoPersonal') && (
-            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => console.log('Editar Documento', row)}>
+            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => onEditClick && onEditClick(row)}>
               <EditIcon sx={{color: 'white'}} />
             </Button>
           )}

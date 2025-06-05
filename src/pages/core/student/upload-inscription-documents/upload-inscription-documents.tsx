@@ -71,7 +71,9 @@ const UploadInscriptionDocuments: React.FC = () => {
     formData.append('approval_doc', approvalDoc);
 
     try {
-      const response = await axios.post('http://localhost:3000/files/upload-inscription-form', formData);
+      const response = await axios.post('http://localhost:3000/files/upload-inscription-form', formData,{
+        withCredentials: true
+      });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
       setTimeout(() => {
         navigate('/list-inscription-documents');

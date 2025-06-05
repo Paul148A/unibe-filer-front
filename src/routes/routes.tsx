@@ -14,6 +14,7 @@ import ListDegreeDocuments from "../pages/core/student/upload-degree-documents/l
 import StudentForm from "../pages/core/admin/manage-students/students-form";
 import StudentsList from "../pages/core/admin/manage-students/students-list";
 import RecordsList from "../pages/core/admin/records/records-list";
+import LanguageDashboard from "../pages/core/language/language-dashboard/language-dashboard";
 
 const AppRouter = () => {
   return (
@@ -49,6 +50,11 @@ const AppRouter = () => {
             {/* Rutas documentos personales */}
             <Route path="/upload-personal-documents" element={<UploadPersonalDocuments />} />
             <Route path="/list-personal-documents" element={<ListPersonalDocuments />} />
+          </Route>
+
+        {/* Language */}
+          <Route element={<Auth allowedRoles={["language"]} />}>
+            <Route path="/language-dashboard" element={<LanguageDashboard />} />
           </Route>
         </Route>
 

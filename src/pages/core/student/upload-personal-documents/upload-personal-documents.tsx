@@ -62,7 +62,9 @@ const UploadPersonalDocuments: React.FC = () => {
     formData.append('files', notarizDegreeDoc);
 
     try {
-      const response = await axios.post('http://localhost:3000/files/upload-personal-documents', formData);
+      const response = await axios.post('http://localhost:3000/files/upload-personal-documents', formData, {
+        withCredentials: true
+      });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
       setTimeout(() => {
         navigate('/list-personal-documents');
