@@ -8,7 +8,6 @@ import {
   InputAdornment,
   IconButton,
   Stack,
-  Alert
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -20,16 +19,8 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 import { useAuth } from '../../../../components/Context/context'; // Asegúrate de que esta ruta sea correcta
-
-interface Role {
-  id: string;
-  name: string;
-}
-
-interface Status {
-  id: string;
-  name: string;
-}
+import { IRole } from '../../../../interfaces/IRole';
+import { IStatus } from '../../../../interfaces/IStatus';
 
 const StudentsForm = () => {
   const [formData, setFormData] = useState({
@@ -42,8 +33,8 @@ const StudentsForm = () => {
     status_id: '',
   });
 
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [statuses, setStatuses] = useState<Status[]>([]);
+  const [roles, setRoles] = useState<IRole[]>([]);
+  const [statuses, setStatuses] = useState<IStatus[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const { setOpenAlert } = useAuth();
 
@@ -61,14 +52,14 @@ const StudentsForm = () => {
         setRoles(rolesData);
         setStatuses(statusesData);
 
-        const studentRole = rolesData.find((role: Role) =>
+        const studentRole = rolesData.find((role: IRole) =>
           role.name.toLowerCase() === 'student'
         );
         if (studentRole) {
           setFormData(prev => ({ ...prev, role_id: studentRole.id }));
         }
-      } catch (error: any) {
-        setOpenAlert({ open: true, type: "error", title: "Error al cargar los datos: " + error.message });
+      } catch (error) {
+        setOpenAlert({ open: true, type: "error", title: "Error al cargar los datos: " + error });
       }
     };
 
@@ -105,12 +96,12 @@ const StudentsForm = () => {
         role_id: formData.role_id, // Mantener el rol de estudiante
         status_id: '',
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error(error);
       setOpenAlert({ 
         open: true, 
         type: "error", 
-        title: "Error al crear el usuario: " + (error.response?.data?.message || error.message) 
+        title: "Error al crear el usuario: " + error 
       });
     }
   };

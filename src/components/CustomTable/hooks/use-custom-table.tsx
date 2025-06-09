@@ -3,13 +3,16 @@ import { useCallback } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Link } from 'react-router-dom';
+import { IRecord } from '../../../interfaces/IRecord';
 
 export type ActionKey =
   | 'EditarUsuario'
   | 'EliminarUsuario'
   | 'VerUsuario'
   | 'VisualizarPdf'
-  | 'DescargarExpediente';
+  | 'DescargarExpediente'
+  | 'RevisarExpediente';
 
 export type Column<T> = {
   key: keyof T | string;
@@ -42,6 +45,11 @@ export function useCustomTable<T>(actions?: ActionKey[]) {
           {actions.includes('DescargarExpediente') && (
             <Button size="small" sx={{backgroundColor: 'green'}} onClick={() => console.log('Descargar', row)}>
               <VisibilityIcon sx={{color: 'white'}} />
+            </Button>
+          )}
+          {actions.includes('RevisarExpediente') && (
+            <Button size="small" sx={{ backgroundColor: 'yellow' }} component={Link} to={`/records-page/${(row as IRecord).id}`}>
+              <VisibilityIcon sx={{ color: 'white' }} />
             </Button>
           )}
         </Stack>
