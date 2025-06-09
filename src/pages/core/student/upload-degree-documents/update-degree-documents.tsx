@@ -58,7 +58,7 @@ const UpdateDegreeDocumentsModal: React.FC<UpdateDegreeDocumentsModalProps> = ({
 
     try {
       await axios.put(
-        `http://localhost:3000/files/update-degree/${document.id}`, 
+        `http://localhost:3000/api1/degree/update-degree/${document.id}`, 
         formData,
         {
           headers: {

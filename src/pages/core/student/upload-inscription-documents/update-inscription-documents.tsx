@@ -54,7 +54,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
 
     try {
       await axios.put(
-        `http://localhost:3000/files/update-inscription-form/${document.id}`, 
+        `http://localhost:3000/api1/inscription/update-inscription-form/${document.id}`, 
         formData,
         {
           headers: {

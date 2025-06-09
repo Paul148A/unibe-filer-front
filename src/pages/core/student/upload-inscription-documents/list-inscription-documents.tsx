@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { InscriptionDocument } from "../../../../interfaces/IInscriptionDocument";
 import { getAllInscriptionDocuments, deleteInscriptionDocument } from "../../../../services/upload-files/inscription-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import CustomTable from "../../../../components/CustomTable/custom-table";
 import Loader from "../../../../components/Loader/loader";
-import { Typography } from "@mui/material";
+import { Typography, Button, Box } from "@mui/material";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import UpdateInscriptionDocumentsModal from "./update-inscription-documents";
 
 const ListInscriptionDocuments = () => {
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState<InscriptionDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<InscriptionDocument | null>(null);
@@ -69,9 +72,18 @@ const ListInscriptionDocuments = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h2" gutterBottom>
-        Lista de Documentos de Inscripción
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h2">
+          Lista de Documentos de Inscripción
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<CloudUploadIcon />}
+          onClick={() => navigate('/upload-inscription-documents')}
+        >
+          Subir Nuevos Documentos
+        </Button>
+      </Box>
 
       <CustomTable<InscriptionDocument>
         data={documents}

@@ -12,6 +12,7 @@ import {
   Stack
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import {
   AssignmentInd as AssignmentIndIcon,
   Grading as GradingIcon,
@@ -79,7 +80,7 @@ const UploadDegreeDocuments: React.FC = () => {
     formData.append('record_id', record?.id || '');
 
     try {
-      const response = await axios.post('http://localhost:3000/files/upload-degree', formData,{
+      const response = await axios.post('http://localhost:3000/api1/degree/upload-degree', formData,{
         withCredentials: true
       });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
@@ -93,9 +94,18 @@ const UploadDegreeDocuments: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h2" gutterBottom align="center">
-        Subir Documentos de Grado
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h2" align="center">
+          Subir Documentos de Grado
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<ListAltIcon />}
+          onClick={() => navigate('/list-degree-documents')}
+        >
+          Ver Lista de Documentos
+        </Button>
+      </Box>
       
       <StyledPaper>
         <Stack component="form" onSubmit={handleSubmit} spacing={3}>

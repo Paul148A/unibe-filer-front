@@ -1,7 +1,7 @@
 import axiosInstance from "../../api/axios";
 import { IDegreeDocument } from "../../interfaces/IDegreeDocument";
 
-const ENDPOINT = 'files';
+const ENDPOINT = 'api1/degree';
 
 interface GetDegreeDocumentsResponse {
   degrees: IDegreeDocument[];
@@ -10,7 +10,9 @@ interface GetDegreeDocumentsResponse {
 }
 
 export const getAllDegreeDocuments = async (): Promise<IDegreeDocument[]> => {
-  const response = await axiosInstance.get<GetDegreeDocumentsResponse>(`${ENDPOINT}/list-degrees`);
+  const response = await axiosInstance.get<GetDegreeDocumentsResponse>(`${ENDPOINT}/list-degrees`, {
+    withCredentials: true
+  });
   return response.data.degrees;
 };
 

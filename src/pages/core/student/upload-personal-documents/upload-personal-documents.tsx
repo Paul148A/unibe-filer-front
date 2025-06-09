@@ -16,6 +16,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import BadgeIcon from '@mui/icons-material/Badge';
 import HowToVoteIcon from '@mui/icons-material/HowToVote';
 import SchoolIcon from '@mui/icons-material/School';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   padding: theme.spacing(4),
@@ -62,7 +63,7 @@ const UploadPersonalDocuments: React.FC = () => {
     formData.append('files', notarizDegreeDoc);
 
     try {
-      const response = await axios.post('http://localhost:3000/files/upload-personal-documents', formData, {
+      const response = await axios.post('http://localhost:3000/api1/personal/upload-personal-documents', formData, {
         withCredentials: true
       });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
@@ -76,10 +77,18 @@ const UploadPersonalDocuments: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h2" gutterBottom align="center">
-        Subir Documentos Personales
-      </Typography>
-      
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h2" align="center">
+          Subir Documentos Personales
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<ListAltIcon />}
+          onClick={() => navigate('/list-personal-documents')}
+        >
+          Ver Lista de Documentos
+        </Button>
+      </Box>
       <StyledPaper>
         <Stack component="form" onSubmit={handleSubmit} spacing={3}>
           <Button

@@ -12,6 +12,7 @@ import {
   Stack
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import ListAltIcon from '@mui/icons-material/ListAlt';
 import {
   Assignment as AssignmentIcon,
   Grade as GradeIcon,
@@ -71,7 +72,7 @@ const UploadInscriptionDocuments: React.FC = () => {
     formData.append('approval_doc', approvalDoc);
 
     try {
-      const response = await axios.post('http://localhost:3000/files/upload-inscription-form', formData,{
+      const response = await axios.post('http://localhost:3000/api1/inscription/upload-inscription-form', formData,{
         withCredentials: true
       });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
@@ -85,9 +86,18 @@ const UploadInscriptionDocuments: React.FC = () => {
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" component="h2" gutterBottom align="center">
-        Subir Documentos de Inscripción
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h2" align="center">
+          Subir Documentos de Inscripción
+        </Typography>
+        <Button
+          variant="outlined"
+          startIcon={<ListAltIcon />}
+          onClick={() => navigate('/list-inscription-documents')}
+        >
+          Ver Lista de Documentos
+        </Button>
+      </Box>
       
       <StyledPaper>
         <Stack component="form" onSubmit={handleSubmit} spacing={3}>

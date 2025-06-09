@@ -1,7 +1,7 @@
 import axiosInstance from "../../api/axios";
 import { InscriptionDocument } from "../../interfaces/IInscriptionDocument";
 
-const ENDPOINT = 'files';
+const ENDPOINT = 'api1/inscription';
 
 interface GetInscriptionDocumentsResponse {
   inscriptionForms: InscriptionDocument[];
@@ -10,7 +10,9 @@ interface GetInscriptionDocumentsResponse {
 }
 
 export const getAllInscriptionDocuments = async (): Promise<InscriptionDocument[]> => {
-  const response = await axiosInstance.get<GetInscriptionDocumentsResponse>(`${ENDPOINT}/list-inscription-forms`);
+  const response = await axiosInstance.get<GetInscriptionDocumentsResponse>(`${ENDPOINT}/list-inscription-forms`, {
+    withCredentials: true
+  });
   return response.data.inscriptionForms;
 };
 

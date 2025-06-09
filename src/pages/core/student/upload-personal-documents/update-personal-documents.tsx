@@ -50,7 +50,7 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
 
     try {
       await axios.put(
-        `http://localhost:3000/files/update-personal-documents/${document.id}`, 
+        `http://localhost:3000/api1/personal/update-personal-documents/${document.id}`, 
         formData,
         {
           headers: {

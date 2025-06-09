@@ -1,7 +1,7 @@
 import axiosInstance from "../../api/axios";
 import { PersonalDocument } from "../../interfaces/IPersonalDocument";
 
-const ENDPOINT = 'files';
+const ENDPOINT = 'api1/personal';
 
 interface GetPersonalDocumentsResponse {
   personalDocuments: PersonalDocument[];
@@ -10,7 +10,9 @@ interface GetPersonalDocumentsResponse {
 }
 
 export const getAllPersonalDocuments = async (): Promise<PersonalDocument[]> => {
-  const response = await axiosInstance.get<GetPersonalDocumentsResponse>(`${ENDPOINT}/list-personal-documents`);
+  const response = await axiosInstance.get<GetPersonalDocumentsResponse>(`${ENDPOINT}/list-personal-documents`, {
+    withCredentials: true
+  });
   return response.data.personalDocuments;
 };
 

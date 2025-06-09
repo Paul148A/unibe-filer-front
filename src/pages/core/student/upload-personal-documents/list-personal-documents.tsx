@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { PersonalDocument } from "../../../../interfaces/IPersonalDocument";
 import { getAllPersonalDocuments, deletePersonalDocument } from "../../../../services/upload-files/personal-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import CustomTable from "../../../../components/CustomTable/custom-table";
 import Loader from "../../../../components/Loader/loader";
-import { Typography } from "@mui/material";
+import { Typography, Button, Box } from "@mui/material";
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import UpdatePersonalDocumentsModal from "./update-personal-documents";
 
 const ListPersonalDocuments = () => {
+  const navigate = useNavigate();
   const [documents, setDocuments] = useState<PersonalDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<PersonalDocument | null>(null);
@@ -69,9 +72,18 @@ const ListPersonalDocuments = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h2" gutterBottom>
-        Lista de Documentos Personales
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" component="h2">
+          Lista de Documentos Personales
+        </Typography>
+        <Button
+          variant="contained"
+          startIcon={<CloudUploadIcon />}
+          onClick={() => navigate('/upload-personal-documents')}
+        >
+          Subir Nuevos Documentos
+        </Button>
+      </Box>
 
       <CustomTable<PersonalDocument>
         data={documents}
