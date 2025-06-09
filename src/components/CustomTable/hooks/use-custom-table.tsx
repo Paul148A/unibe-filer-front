@@ -3,6 +3,8 @@ import { useCallback } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import { Link } from 'react-router-dom';
+import { IRecord } from '../../../interfaces/IRecord';
 
 export type ActionKey =
   | 'EditarUsuario'
