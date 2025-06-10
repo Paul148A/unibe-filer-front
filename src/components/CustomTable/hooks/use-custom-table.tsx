@@ -90,7 +90,7 @@ export function useCustomTable<T>(
           )}
 
           {actions.includes('RevisarExpediente') && (
-            <Button size="small" sx={{ backgroundColor: 'yellow' }} component={Link} to={`/records-page/${(row as IRecord).id}`}>
+            <Button size="small" sx={{ backgroundColor: 'yellow' }} component={Link} to={`/records-page/${(row as IRecord).user.id}`}>
               <VisibilityIcon sx={{ color: 'white' }} />
             </Button>
           )}
