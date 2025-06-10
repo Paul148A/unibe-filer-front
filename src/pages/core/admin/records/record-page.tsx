@@ -23,7 +23,17 @@ const RecordPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const record = await getRecordByUserId(id || "");
+                console.log("Fetching record data for user ID:", id);
+                if (!id) {
+                    setOpenAlert({
+                        open: true,
+                        type: "error",
+                        title: "ID de usuario no proporcionado",
+                    });
+                    return;
+                }
+                const record = await getRecordByUserId(id);
+                console.log("Record fetched:", record);
                 if (!record || record.length === 0) {
                     setOpenAlert({
                         open: true,
@@ -33,11 +43,11 @@ const RecordPage = () => {
                     return;
                 }
                 setRecord(record);
-                const personalDocuments = await getPersonalDocumentsByRecordId(id || "");
+                const personalDocuments = await getPersonalDocumentsByRecordId(record[0]?.id);
                 setPersonalDocs(personalDocuments[0]);
-                const degreeDocuments = await getDegreeDocumentsByRecordId(id || "");
+                const degreeDocuments = await getDegreeDocumentsByRecordId(record[0]?.id);
                 setDegreeDocs(degreeDocuments[0]);
-                const inscriptionDocuments = await getInscriptionDocumentsByRecordId(id || "");
+                const inscriptionDocuments = await getInscriptionDocumentsByRecordId(record[0]?.id);
                 setInscriptionDocs(inscriptionDocuments[0]);
 
                 if (!personalDocuments || personalDocuments.length === 0 || !degreeDocuments || degreeDocuments.length === 0 || !inscriptionDocuments || inscriptionDocuments.length === 0) {
@@ -56,47 +66,49 @@ const RecordPage = () => {
     return (
         <>
             <Grid2>
-                <Typography variant="h4" component="h2" gutterBottom>
-                    Lista de Expedientes
+                <Typography sx={{ p: 2, mt: 1 }} variant="h4" component="h2" gutterBottom>
+                    Expediente individual
                 </Typography>
             </Grid2>
-            <Grid2 sx={{ maxWidth: '95%', boxShadow: 3, borderRadius: 2, marginTop: 2 }}>
-                <Typography variant="h6" component="h3" gutterBottom>
-                    Expediente deel estudiante: {record[0]?.user?.names} {record[0]?.user?.last_names}
-                </Typography>
-                <Grid2 container sx={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}>
-                    <Grid2 size={4}>
-                        {personalDocs &&
-                            <RecordSection
-                                docs={personalDocs}
-                                img='/personalimg.png'
-                                title='Documentos Personales'
-                                description='Documentos personales del estudiante'
-                                sectionType='personal'
-                            />}
-                    </Grid2>
-                    <Grid2 size={4}>
-                        {degreeDocs &&
-                            <RecordSection
-                                docs={degreeDocs}
-                                img='/degreeimg.png'
-                                title='Documentos de Título'
-                                description='Documentos relacionados al título del estudiante'
-                                sectionType='degree'
-                            />}
-                    </Grid2>
-                    <Grid2 size={4}>
-                        {inscriptionDocs &&
-                            <RecordSection
-                                docs={inscriptionDocs}
-                                img='/inscriptionimg.png'
-                                title='Documentos de Inscripción'
-                                description='Documentos relacionados a la inscripción del estudiante'
-                                sectionType='inscription'
-                            />}
+            <Grid2 sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Grid2 sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2 }}>
+                    <Typography sx={{ p: 2, mt: 1 }} variant="h5" component="h3" gutterBottom>
+                        Expediente del estudiante: {record[0]?.user?.names} {record[0]?.user?.last_names}
+                    </Typography>
+                    <Grid2 container sx={{
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}>
+                        <Grid2 size={4}>
+                            {personalDocs &&
+                                <RecordSection
+                                    docs={personalDocs}
+                                    img='/personalimg.png'
+                                    title='Documentos Personales'
+                                    description='Documentos personales del estudiante'
+                                    sectionType='personal'
+                                />}
+                        </Grid2>
+                        <Grid2 size={4}>
+                            {degreeDocs &&
+                                <RecordSection
+                                    docs={degreeDocs}
+                                    img='/degreeimg.png'
+                                    title='Documentos de Título'
+                                    description='Documentos relacionados al título del estudiante'
+                                    sectionType='degree'
+                                />}
+                        </Grid2>
+                        <Grid2 size={4}>
+                            {inscriptionDocs &&
+                                <RecordSection
+                                    docs={inscriptionDocs}
+                                    img='/inscriptionimg.png'
+                                    title='Documentos de Inscripción'
+                                    description='Documentos relacionados a la inscripción del estudiante'
+                                    sectionType='inscription'
+                                />}
+                        </Grid2>
                     </Grid2>
                 </Grid2>
             </Grid2>

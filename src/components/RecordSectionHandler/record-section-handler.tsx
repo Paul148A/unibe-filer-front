@@ -1,9 +1,11 @@
+import { Dialog, DialogTitle, IconButton, DialogContent } from "@mui/material";
 import { IDegreeDocument } from "../../interfaces/IDegreeDocument";
 import { IInscriptionDocument } from "../../interfaces/IInscriptionDocument";
 import { IPersonalDocument } from "../../interfaces/IPersonalDocument";
 import DegreeDocsTable from "../Modals/DegreeDocsTable/degree-docs-table";
 import InscriptionDocsTable from "../Modals/InscriptionDocsTable/inscription-docs-table";
 import PersonalDocsTable from "../Modals/PersonalDocsTable/personal-docs-table";
+import CloseIcon from '@mui/icons-material/Close';
 
 interface Props {
   sectionType?: string;
@@ -33,7 +35,24 @@ const RecordSectionHandler = (props: Props) => {
   }
 
   return (
-    <>{content}</>
+    <Dialog open={props.open} onClose={props.onClose} fullWidth maxWidth="md">
+      <DialogTitle>
+        Documentos del estudiante
+        <IconButton
+          aria-label="close"
+          onClick={props.onClose}
+          sx={{
+            position: 'absolute',
+            right: 8,
+            top: 8,
+            color: (theme) => theme.palette.grey[500],
+          }}
+        >
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent dividers>{content}</DialogContent>
+    </Dialog>
   );
 }
 

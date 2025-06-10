@@ -21,6 +21,6 @@ export const deleteDegreeDocument = async (id: string): Promise<void> => {
 };
 
 export const getDegreeDocumentsByRecordId = async (recordId: string): Promise<IDegreeDocument[]> => {
-  const response = await axiosInstance.get<GetDegreeDocumentsResponse>(`${ENDPOINT}/degree-docs/${recordId}`);
+  const response = await axiosInstance.get<GetDegreeDocumentsResponse>(`${ENDPOINT}/record/${recordId}`);
   return response.data.data;
 }
