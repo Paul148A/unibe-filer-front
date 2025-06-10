@@ -1,21 +1,26 @@
 import axiosInstance from "../../api/axios";
-import { InscriptionDocument } from "../../interfaces/IInscriptionDocument";
+import { IInscriptionDocument } from "../../interfaces/IInscriptionDocument";
 
 const ENDPOINT = 'api1/inscription';
 
 interface GetInscriptionDocumentsResponse {
-  inscriptionForms: InscriptionDocument[];
+  data: IInscriptionDocument[];
   message: string;
   title: string;
 }
 
-export const getAllInscriptionDocuments = async (): Promise<InscriptionDocument[]> => {
+export const getAllInscriptionDocuments = async (): Promise<IInscriptionDocument[]> => {
   const response = await axiosInstance.get<GetInscriptionDocumentsResponse>(`${ENDPOINT}/list-inscription-forms`, {
     withCredentials: true
   });
-  return response.data.inscriptionForms;
+  return response.data.data;
 };
 
 export const deleteInscriptionDocument = async (id: string): Promise<void> => {
   await axiosInstance.delete(`${ENDPOINT}/delete-inscription-form/${id}`);
 };
+
+export const getInscriptionDocumentsByRecordId = async (recordId: string): Promise<IInscriptionDocument[]> => {
+  const response = await axiosInstance.get<GetInscriptionDocumentsResponse>(`${ENDPOINT}/record/${recordId}`);
+  return response.data.data;
+}

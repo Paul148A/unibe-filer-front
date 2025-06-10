@@ -1,4 +1,4 @@
-export interface PersonalDocument {
+export interface IPersonalDocument {
   id: string;
   pictureDoc: string;
   dniDoc: string;

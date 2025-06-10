@@ -1,4 +1,4 @@
-export interface InscriptionDocument {
+export interface IInscriptionDocument {
   id: string;
   registrationDoc: string;
   semesterGradeChartDoc: string;

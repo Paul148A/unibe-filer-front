@@ -61,7 +61,7 @@ const RecordsList = () => {
             render: (value) => (typeof value === "object" && value !== null && "email" in value ? value.email : "")
           },
         ]}
-        actionKeys={["DescargarExpediente"]}
+        actionKeys={["DescargarExpediente", "RevisarExpediente"]}
       />
     </>
   );

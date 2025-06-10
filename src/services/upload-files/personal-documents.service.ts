@@ -1,24 +1,29 @@
 import axiosInstance from "../../api/axios";
-import { PersonalDocument } from "../../interfaces/IPersonalDocument";
+import { IPersonalDocument } from "../../interfaces/IPersonalDocument";
 
 const ENDPOINT = 'api1/personal';
 
 interface GetPersonalDocumentsResponse {
-  personalDocuments: PersonalDocument[];
+  data: IPersonalDocument[];
   message: string;
   title: string;
 }
 
-export const getAllPersonalDocuments = async (): Promise<PersonalDocument[]> => {
+export const getAllPersonalDocuments = async (): Promise<IPersonalDocument[]> => {
   const response = await axiosInstance.get<GetPersonalDocumentsResponse>(`${ENDPOINT}/list-personal-documents`, {
     withCredentials: true
   });
-  return response.data.personalDocuments;
+  return response.data.data;
 };
 
 export const deletePersonalDocument = async (id: string): Promise<void> => {
   await axiosInstance.delete(`${ENDPOINT}/delete-personal-documents/${id}`);
 };
+
+export const getPersonalDocumentsByRecordId = async (recordId: string): Promise<IPersonalDocument[]> => {
+  const response = await axiosInstance.get<GetPersonalDocumentsResponse>(`${ENDPOINT}/record/${recordId}`);
+  return response.data.data;
+}
 
 export const updatePersonalDocuments = async (
   id: string, 

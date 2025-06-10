@@ -15,6 +15,7 @@ import StudentForm from "../pages/core/admin/manage-students/students-form";
 import StudentsList from "../pages/core/admin/manage-students/students-list";
 import RecordsList from "../pages/core/admin/records/records-list";
 import LanguageDashboard from "../pages/core/language/language-dashboard/language-dashboard";
+import RecordPage from "../pages/core/admin/records/record-page";
 
 const AppRouter = () => {
   return (
@@ -33,6 +34,7 @@ const AppRouter = () => {
 
             {/* Rutas expedientes estudiantiles */}
             <Route path="/records-list" element={<RecordsList />} />
+            <Route path="/records-page/:id" element={<RecordPage />} />
           </Route>
           
         {/* Student */}
