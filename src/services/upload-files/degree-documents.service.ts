@@ -10,7 +10,7 @@ interface GetDegreeDocumentsResponse {
 }
 
 export const getAllDegreeDocuments = async (): Promise<IDegreeDocument[]> => {
-  const response = await axiosInstance.get<GetDegreeDocumentsResponse>(`${ENDPOINT}/list-data`, {
+  const response = await axiosInstance.get<GetDegreeDocumentsResponse>(`${ENDPOINT}/list-degrees`, {
     withCredentials: true
   });
   return response.data.data;

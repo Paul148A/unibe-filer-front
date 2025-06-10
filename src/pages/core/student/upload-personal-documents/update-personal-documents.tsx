@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { PersonalDocument } from '../../../../interfaces/IPersonalDocument';
+import { IPersonalDocument } from '../../../../interfaces/IPersonalDocument';
 import { useAuth } from '../../../../components/Context/context';
 import '../../../../styles/update-documents.css';
 
 interface UpdatePersonalDocumentsModalProps {
-  document: PersonalDocument;
+  document: IPersonalDocument;
   onClose: () => void;
   onUpdate: () => void;
 }

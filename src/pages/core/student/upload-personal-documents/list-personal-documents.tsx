@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { PersonalDocument } from "../../../../interfaces/IPersonalDocument";
+import { IPersonalDocument } from "../../../../interfaces/IPersonalDocument";
 import { getAllPersonalDocuments, deletePersonalDocument } from "../../../../services/upload-files/personal-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import CustomTable from "../../../../components/CustomTable/custom-table";
@@ -11,9 +11,9 @@ import UpdatePersonalDocumentsModal from "./update-personal-documents";
 
 const ListPersonalDocuments = () => {
   const navigate = useNavigate();
-  const [documents, setDocuments] = useState<PersonalDocument[]>([]);
+  const [documents, setDocuments] = useState<IPersonalDocument[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDocument, setSelectedDocument] = useState<PersonalDocument | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<IPersonalDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const { setOpenAlert } = useAuth();
 
@@ -36,7 +36,7 @@ const ListPersonalDocuments = () => {
     fetchDocuments();
   }, []);
 
-  const handleDelete = async (doc: PersonalDocument) => {
+  const handleDelete = async (doc: IPersonalDocument) => {
     try {
       await deletePersonalDocument(doc.id);
       setOpenAlert({
@@ -55,7 +55,7 @@ const ListPersonalDocuments = () => {
     }
   };
 
-  const handleUpdateClick = (doc: PersonalDocument) => {
+  const handleUpdateClick = (doc: IPersonalDocument) => {
     setSelectedDocument(doc);
     setShowUpdateModal(true);
   };
@@ -85,7 +85,7 @@ const ListPersonalDocuments = () => {
         </Button>
       </Box>
 
-      <CustomTable<PersonalDocument>
+      <CustomTable<IPersonalDocument>
         data={documents}
         columns={[
           { key: "pictureDoc", label: "Foto Carnet" },

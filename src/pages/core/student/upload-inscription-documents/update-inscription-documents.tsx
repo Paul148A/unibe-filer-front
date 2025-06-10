@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { InscriptionDocument } from '../../../../interfaces/IInscriptionDocument';
+import { IInscriptionDocument } from '../../../../interfaces/IInscriptionDocument';
 import { useAuth } from '../../../../components/Context/context';
 import '../../../../styles/update-documents.css';
 
 interface UpdateInscriptionDocumentsModalProps {
-  document: InscriptionDocument;
+  document: IInscriptionDocument;
   onClose: () => void;
   onUpdate: () => void;
 }

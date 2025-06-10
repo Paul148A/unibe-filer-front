@@ -13,6 +13,7 @@ export const getAllPersonalDocuments = async (): Promise<IPersonalDocument[]> =>
   const response = await axiosInstance.get<GetPersonalDocumentsResponse>(`${ENDPOINT}/list-personal-documents`, {
     withCredentials: true
   });
+  console.log(response.data);
   return response.data.data;
 };
 
