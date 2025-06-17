@@ -19,6 +19,7 @@ export type ActionKey =
   | 'EditarDocumentoInscripcion'
   | 'EliminarDocumentoInscripcion'
   | 'RevisarExpediente'
+  | 'RevisarCertificadoIngles'
   ;
 
 export type Column<T> = {
@@ -59,7 +60,7 @@ export function useCustomTable<T>(
             </Button>
           )}
           {actions.includes('EditarDocumentoGrado') && (
-            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => console.log('Editar Documento', row)}>
+            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => onEditClick && onEditClick(row)}>
               <EditIcon sx={{color: 'white'}} />
             </Button>
           )}
@@ -79,7 +80,7 @@ export function useCustomTable<T>(
             </Button>
           )}
           {actions.includes('EditarDocumentoInscripcion') && (
-            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => console.log('Editar Documento', row)}>
+            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => onEditClick && onEditClick(row)}>
               <EditIcon sx={{color: 'white'}} />
             </Button>
           )}
@@ -88,9 +89,13 @@ export function useCustomTable<T>(
               <DeleteIcon sx={{color: 'white'}} />
             </Button>
           )}
-
           {actions.includes('RevisarExpediente') && (
             <Button size="small" sx={{ backgroundColor: 'yellow' }} component={Link} to={`/records-page/${(row as IRecord).user.id}`}>
+              <VisibilityIcon sx={{ color: 'white' }} />
+            </Button>
+          )}
+          {actions.includes('RevisarCertificadoIngles') && (
+            <Button size="small" sx={{ backgroundColor: 'green' }} component={Link} to={`/certificates-language-page/${(row as IRecord).user.id}`}>
               <VisibilityIcon sx={{ color: 'white' }} />
             </Button>
           )}

@@ -6,4 +6,5 @@ export interface IInscriptionDocument {
   englishCertificateDoc: string;
   enrollmentCertificateDoc: string;
   approvalDoc: string;
+  englishCertificateStatus?: 'approved' | 'rejected' | 'pending';
 }

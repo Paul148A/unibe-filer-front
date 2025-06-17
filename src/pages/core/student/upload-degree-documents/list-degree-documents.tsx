@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { IDegreeDocument } from "../../../../interfaces/IDegreeDocument";
-import { deleteDegreeDocument, getAllDegreeDocuments } from "../../../../services/upload-files/degree-documents.service";
+import { getAllDegreeDocuments } from "../../../../services/upload-files/degree-documents.service";
 import { useAuth } from "../../../../components/Context/context";
-import CustomTable from "../../../../components/CustomTable/custom-table";
+import VerticalTable from "../../../../components/CustomVerticalTable/vertical-table";
 import Loader from "../../../../components/Loader/loader";
 import { Typography, Button, Box } from "@mui/material";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import EditIcon from '@mui/icons-material/Edit';
 import UpdateDegreeDocumentsModal from "./update-degree-documents";
 
 const ListDegreeDocuments = () => {
-  const navigate = useNavigate();
   const [documents, setDocuments] = useState<IDegreeDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IDegreeDocument | null>(null);
@@ -36,25 +35,6 @@ const ListDegreeDocuments = () => {
     fetchDocuments();
   }, []);
 
-  const handleDelete = async (doc: IDegreeDocument) => {
-    try {
-      await deleteDegreeDocument(doc.id);
-      setOpenAlert({ 
-        open: true, 
-        type: "success", 
-        title: "Documentos eliminados correctamente" 
-      });
-      setDocuments(documents.filter(d => d.id !== doc.id));
-    } catch (error) {
-      setOpenAlert({ 
-        open: true, 
-        type: "error", 
-        title: "Error al eliminar documentos" 
-      });
-      console.error("Error al eliminar:", error);
-    }
-  };
-
   const handleUpdateClick = (doc: IDegreeDocument) => {
     setSelectedDocument(doc);
     setShowUpdateModal(true);
@@ -68,6 +48,34 @@ const ListDegreeDocuments = () => {
       .finally(() => setLoading(false));
   };
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const docs = await getAllDegreeDocuments();
+      setDocuments(docs);
+      setOpenAlert({
+        open: true,
+        type: "success",
+        title: "Lista actualizada correctamente",
+      });
+    } catch (error) {
+      setOpenAlert({
+        open: true,
+        type: "error",
+        title: "Error al actualizar la lista",
+      });
+      console.error("Error al actualizar:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditAll = () => {
+    if (documents.length > 0) {
+      handleUpdateClick(documents[0]);
+    }
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -76,16 +84,26 @@ const ListDegreeDocuments = () => {
         <Typography variant="h4" component="h2">
           Lista de Documentos de Grado
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<CloudUploadIcon />}
-          onClick={() => navigate('/upload-degree-documents')}
-        >
-          Subir Nuevos Documentos
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={handleEditAll}
+            disabled={documents.length === 0}
+          >
+            Editar
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={handleRefresh}
+          >
+            Refrescar
+          </Button>
+        </Box>
       </Box>
       
-      <CustomTable<IDegreeDocument>
+      <VerticalTable<IDegreeDocument>
         data={documents}
         columns={[
           { key: "topicComplainDoc", label: "Solicitud de Tema" },
@@ -97,9 +115,10 @@ const ListDegreeDocuments = () => {
           { key: "electiveGrade", label: "Nota Electivo" },
           { key: "academicClearance", label: "Libre de Deuda" },
         ]}
-        actionKeys={["EditarDocumentoGrado", "EliminarDocumentoGrado"]}
-        onEditClick={handleUpdateClick}
-        onDeleteClick={handleDelete}
+        // actionKeys={["EditarDocumentoGrado", "Refrescar"]}
+        // onEditClick={handleUpdateClick}
+        // onDeleteClick={handleDelete}
+        // onRefreshClick={handleRefresh}
       />
 
       {showUpdateModal && selectedDocument && (

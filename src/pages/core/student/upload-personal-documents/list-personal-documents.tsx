@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { IPersonalDocument } from "../../../../interfaces/IPersonalDocument";
-import { getAllPersonalDocuments, deletePersonalDocument } from "../../../../services/upload-files/personal-documents.service";
+import { getAllPersonalDocuments } from "../../../../services/upload-files/personal-documents.service";
 import { useAuth } from "../../../../components/Context/context";
-import CustomTable from "../../../../components/CustomTable/custom-table";
+import VerticalTable from "../../../../components/CustomVerticalTable/vertical-table";
 import Loader from "../../../../components/Loader/loader";
 import { Typography, Button, Box } from "@mui/material";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import EditIcon from '@mui/icons-material/Edit';
 import UpdatePersonalDocumentsModal from "./update-personal-documents";
 
 const ListPersonalDocuments = () => {
-  const navigate = useNavigate();
   const [documents, setDocuments] = useState<IPersonalDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IPersonalDocument | null>(null);
@@ -36,25 +35,6 @@ const ListPersonalDocuments = () => {
     fetchDocuments();
   }, []);
 
-  const handleDelete = async (doc: IPersonalDocument) => {
-    try {
-      await deletePersonalDocument(doc.id);
-      setOpenAlert({
-        open: true,
-        type: "success",
-        title: "Documentos eliminados correctamente",
-      });
-      setDocuments(documents.filter(d => d.id !== doc.id));
-    } catch (error) {
-      setOpenAlert({
-        open: true,
-        type: "error",
-        title: "Error al eliminar documentos",
-      });
-      console.error("Error al eliminar:", error);
-    }
-  };
-
   const handleUpdateClick = (doc: IPersonalDocument) => {
     setSelectedDocument(doc);
     setShowUpdateModal(true);
@@ -68,6 +48,34 @@ const ListPersonalDocuments = () => {
       .finally(() => setLoading(false));
   };
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const docs = await getAllPersonalDocuments();
+      setDocuments(docs);
+      setOpenAlert({
+        open: true,
+        type: "success",
+        title: "Lista actualizada correctamente",
+      });
+    } catch (error) {
+      setOpenAlert({
+        open: true,
+        type: "error",
+        title: "Error al actualizar la lista",
+      });
+      console.error("Error al actualizar:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditAll = () => {
+    if (documents.length > 0) {
+      handleUpdateClick(documents[0]);
+    }
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -76,16 +84,26 @@ const ListPersonalDocuments = () => {
         <Typography variant="h4" component="h2">
           Lista de Documentos Personales
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<CloudUploadIcon />}
-          onClick={() => navigate('/upload-personal-documents')}
-        >
-          Subir Nuevos Documentos
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={handleEditAll}
+            disabled={documents.length === 0}
+          >
+            Editar
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={handleRefresh}
+          >
+            Refrescar
+          </Button>
+        </Box>
       </Box>
 
-      <CustomTable<IPersonalDocument>
+      <VerticalTable<IPersonalDocument>
         data={documents}
         columns={[
           { key: "pictureDoc", label: "Foto Carnet" },
@@ -93,9 +111,10 @@ const ListPersonalDocuments = () => {
           { key: "votingBallotDoc", label: "Papeleta de Votación" },
           { key: "notarizDegreeDoc", label: "Título Notariado" },
         ]}
-        actionKeys={["EditarDocumentoPersonal", "EliminarDocumentoPersonal"]}
-        onEditClick={handleUpdateClick}
-        onDeleteClick={handleDelete}
+        // actionKeys={["EditarDocumentoPersonal", "Refrescar"]}
+        // onEditClick={handleUpdateClick}
+        // onDeleteClick={handleDelete}
+        // onRefreshClick={handleRefresh}
       />
 
       {showUpdateModal && selectedDocument && (

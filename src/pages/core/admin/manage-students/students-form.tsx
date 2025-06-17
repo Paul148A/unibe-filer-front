@@ -8,7 +8,6 @@ import {
   InputAdornment,
   IconButton,
   Stack,
-  Alert
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -19,11 +18,12 @@ import {
   VisibilityOff
 } from '@mui/icons-material';
 import axios from 'axios';
-import { useAuth } from '../../../../components/Context/context'; // Asegúrate de que esta ruta sea correcta
+import { useAuth } from '../../../../components/Context/context';
 
 interface Role {
   id: string;
   name: string;
+  description: string;
 }
 
 interface Status {
@@ -45,11 +45,13 @@ const StudentsForm = () => {
   const [roles, setRoles] = useState<Role[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setIsLoading(true);
         const [rolesRes, statusesRes] = await Promise.all([
           axios.get('http://localhost:3000/api1/roles'),
           axios.get('http://localhost:3000/api1/status'),
@@ -61,14 +63,13 @@ const StudentsForm = () => {
         setRoles(rolesData);
         setStatuses(statusesData);
 
-        const studentRole = rolesData.find((role: Role) =>
-          role.name.toLowerCase() === 'student'
-        );
-        if (studentRole) {
-          setFormData(prev => ({ ...prev, role_id: studentRole.id }));
+        if (!formData.role_id && rolesData.length > 0) {
+          setFormData(prev => ({ ...prev, role_id: rolesData[0].id }));
         }
       } catch (error: any) {
         setOpenAlert({ open: true, type: "error", title: "Error al cargar los datos: " + error.message });
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -76,33 +77,43 @@ const StudentsForm = () => {
   }, [setOpenAlert]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    console.log(`Campo ${name} cambiado a: ${value}`); // Debug log
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Validación básica de campos requeridos
       if (!formData.names || !formData.last_names || !formData.identification || 
           !formData.email || !formData.password || !formData.role_id || !formData.status_id) {
         setOpenAlert({ open: true, type: "error", title: "Todos los campos son requeridos" });
         return;
       }
 
-      await axios.post('http://localhost:3000/api1/users', formData);
+      const userData = {
+        names: formData.names,
+        last_names: formData.last_names,
+        identification: formData.identification,
+        email: formData.email,
+        password: formData.password,
+        role: formData.role_id,
+        status: formData.status_id,
+      };
+      await axios.post('http://localhost:3000/api1/users', userData);
       setOpenAlert({ open: true, type: "success", title: "Usuario creado con éxito" });
       
-      // Resetear el formulario
+      // Limpiar el formulario después de crear el usuario
       setFormData({
         names: '',
         last_names: '',
         identification: '',
         email: '',
         password: '',
-        role_id: formData.role_id, // Mantener el rol de estudiante
+        role_id: '',
         status_id: '',
       });
     } catch (error: any) {
@@ -117,10 +128,10 @@ const StudentsForm = () => {
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ p: 4, maxWidth: 600, mx: 'auto' }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h5" gutterBottom sx={{ mb: 3 }}>
         Crear Usuario
       </Typography>
-      <Stack spacing={2}>
+      <Stack spacing={3}>
         <TextField
           fullWidth
           label="Nombres"
@@ -135,6 +146,7 @@ const StudentsForm = () => {
               </InputAdornment>
             ),
           }}
+          variant="outlined"
         />
         <TextField
           fullWidth
@@ -150,6 +162,7 @@ const StudentsForm = () => {
               </InputAdornment>
             ),
           }}
+          variant="outlined"
         />
         <TextField
           fullWidth
@@ -165,10 +178,11 @@ const StudentsForm = () => {
               </InputAdornment>
             ),
           }}
+          variant="outlined"
         />
         <TextField
           fullWidth
-          label="Correo"
+          label="Correo Electrónico"
           name="email"
           type="email"
           value={formData.email}
@@ -181,6 +195,7 @@ const StudentsForm = () => {
               </InputAdornment>
             ),
           }}
+          variant="outlined"
         />
         <TextField
           fullWidth
@@ -198,12 +213,13 @@ const StudentsForm = () => {
             ),
             endAdornment: (
               <InputAdornment position="end">
-                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end">
+                <IconButton onClick={() => setShowPassword(!showPassword)} edge="end" aria-label="toggle password visibility">
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
             ),
           }}
+          variant="outlined"
         />
         <TextField
           select
@@ -213,11 +229,11 @@ const StudentsForm = () => {
           value={formData.role_id}
           onChange={handleChange}
           required
-          disabled={!!formData.role_id}
+          variant="outlined"
         >
           {roles.map((role) => (
             <MenuItem key={role.id} value={role.id}>
-              {role.name}
+              {role.description}
             </MenuItem>
           ))}
         </TextField>
@@ -229,6 +245,7 @@ const StudentsForm = () => {
           value={formData.status_id}
           onChange={handleChange}
           required
+          variant="outlined"
         >
           {statuses.map((status) => (
             <MenuItem key={status.id} value={status.id}>
@@ -236,7 +253,14 @@ const StudentsForm = () => {
             </MenuItem>
           ))}
         </TextField>
-        <Button type="submit" variant="contained" color="primary" fullWidth>
+        <Button 
+          type="submit" 
+          variant="contained" 
+          color="primary" 
+          fullWidth
+          size="large"
+          sx={{ mt: 2 }}
+        >
           Crear Usuario
         </Button>
       </Stack>

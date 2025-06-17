@@ -1,16 +1,15 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { IInscriptionDocument } from "../../../../interfaces/IInscriptionDocument";
-import { getAllInscriptionDocuments, deleteInscriptionDocument } from "../../../../services/upload-files/inscription-documents.service";
+import { getAllInscriptionDocuments } from "../../../../services/upload-files/inscription-documents.service";
 import { useAuth } from "../../../../components/Context/context";
-import CustomTable from "../../../../components/CustomTable/custom-table";
+import VerticalTable from "../../../../components/CustomVerticalTable/vertical-table";
 import Loader from "../../../../components/Loader/loader";
 import { Typography, Button, Box } from "@mui/material";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import EditIcon from '@mui/icons-material/Edit';
 import UpdateInscriptionDocumentsModal from "./update-inscription-documents";
 
 const ListInscriptionDocuments = () => {
-  const navigate = useNavigate();
   const [documents, setDocuments] = useState<IInscriptionDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IInscriptionDocument | null>(null);
@@ -36,25 +35,6 @@ const ListInscriptionDocuments = () => {
     fetchDocuments();
   }, []);
 
-  const handleDelete = async (doc: IInscriptionDocument) => {
-    try {
-      await deleteInscriptionDocument(doc.id);
-      setOpenAlert({
-        open: true,
-        type: "success",
-        title: "Documentos eliminados correctamente",
-      });
-      setDocuments(documents.filter(d => d.id !== doc.id));
-    } catch (error) {
-      setOpenAlert({
-        open: true,
-        type: "error",
-        title: "Error al eliminar documentos",
-      });
-      console.error("Error al eliminar:", error);
-    }
-  };
-
   const handleUpdateClick = (doc: IInscriptionDocument) => {
     setSelectedDocument(doc);
     setShowUpdateModal(true);
@@ -68,6 +48,34 @@ const ListInscriptionDocuments = () => {
       .finally(() => setLoading(false));
   };
 
+  const handleRefresh = async () => {
+    setLoading(true);
+    try {
+      const docs = await getAllInscriptionDocuments();
+      setDocuments(docs);
+      setOpenAlert({
+        open: true,
+        type: "success",
+        title: "Lista actualizada correctamente",
+      });
+    } catch (error) {
+      setOpenAlert({
+        open: true,
+        type: "error",
+        title: "Error al actualizar la lista",
+      });
+      console.error("Error al actualizar:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleEditAll = () => {
+    if (documents.length > 0) {
+      handleUpdateClick(documents[0]);
+    }
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -76,16 +84,26 @@ const ListInscriptionDocuments = () => {
         <Typography variant="h4" component="h2">
           Lista de Documentos de Inscripción
         </Typography>
-        <Button
-          variant="contained"
-          startIcon={<CloudUploadIcon />}
-          onClick={() => navigate('/upload-inscription-documents')}
-        >
-          Subir Nuevos Documentos
-        </Button>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={handleEditAll}
+            disabled={documents.length === 0}
+          >
+            Editar
+          </Button>
+          <Button
+            variant="outlined"
+            startIcon={<RefreshIcon />}
+            onClick={handleRefresh}
+          >
+            Refrescar
+          </Button>
+        </Box>
       </Box>
 
-      <CustomTable<IInscriptionDocument>
+      <VerticalTable<IInscriptionDocument>
         data={documents}
         columns={[
           { key: "registrationDoc", label: "Documento de Registro" },
@@ -95,9 +113,10 @@ const ListInscriptionDocuments = () => {
           { key: "enrollmentCertificateDoc", label: "Certificado de Matrícula" },
           { key: "approvalDoc", label: "Documento de Aprobación" },
         ]}
-        actionKeys={["EditarDocumentoInscripcion", "EliminarDocumentoInscripcion"]}
-        onEditClick={handleUpdateClick}
-        onDeleteClick={handleDelete}
+        // actionKeys={["EditarDocumentoInscripcion", "Refrescar"]}
+        // onEditClick={handleUpdateClick}
+        // onDeleteClick={handleDelete}
+        // onRefreshClick={handleRefresh}
       />
 
       {showUpdateModal && selectedDocument && (

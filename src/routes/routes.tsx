@@ -16,6 +16,8 @@ import StudentsList from "../pages/core/admin/manage-students/students-list";
 import RecordsList from "../pages/core/admin/records/records-list";
 import LanguageDashboard from "../pages/core/language/language-dashboard/language-dashboard";
 import RecordPage from "../pages/core/admin/records/record-page";
+import CertificaList from "../pages/core/language/manage-certificates/certificates-list";
+import CertificatePage from "../pages/core/language/manage-certificates/certificates-page";
 
 const AppRouter = () => {
   return (
@@ -57,6 +59,8 @@ const AppRouter = () => {
         {/* Language */}
           <Route element={<Auth allowedRoles={["language"]} />}>
             <Route path="/language-dashboard" element={<LanguageDashboard />} />
+            <Route path="/certificates-language-list" element={<CertificaList />} />
+            <Route path="/certificates-language-page/:id" element={<CertificatePage />} />
           </Route>
         </Route>
 

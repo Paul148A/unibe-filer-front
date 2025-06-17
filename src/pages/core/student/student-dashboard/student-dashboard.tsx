@@ -16,7 +16,7 @@ const StudentDashboard = () => {
         <Grid2 size={4}>
           <Section
             img="/inscriptionimg.png"
-            link="/upload-inscription-documents"
+            link="/list-inscription-documents"
             title="Documentos de Inscripción"
             description="Consulta o ingresa tus documentos de inscripción."
           />
@@ -24,7 +24,7 @@ const StudentDashboard = () => {
         <Grid2 size={4}>
           <Section
             img="/personalimg.png"
-            link="/upload-personal-documents"
+            link="/list-personal-documents"
             title="Documentos Personales"
             description="Consulta o ingresa tus documentos personales"
           />
@@ -32,7 +32,7 @@ const StudentDashboard = () => {
         <Grid2 size={4}>
           <Section
             img="/degreeimg.png"
-            link="/upload-degree-documents"
+            link="/list-degree-documents"
             title="Documentos de Grado"
             description="Consulta o ingresa tus documentos de titulación"
           />

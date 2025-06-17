@@ -24,3 +24,17 @@ export const getDegreeDocumentsByRecordId = async (recordId: string): Promise<ID
   const response = await axiosInstance.get<GetDegreeDocumentsResponse>(`${ENDPOINT}/record/${recordId}`);
   return response.data.data;
 }
+
+export const updateDegree = async (
+  id: string, 
+  formData: FormData
+): Promise<void> => {
+  await axiosInstance.put(
+    `${ENDPOINT}/update-degree/${id}`, 
+    formData,{
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }
+  );
+};
