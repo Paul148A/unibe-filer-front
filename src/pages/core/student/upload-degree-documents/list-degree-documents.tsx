@@ -8,12 +8,15 @@ import { Typography, Button, Box } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import UpdateDegreeDocumentsModal from "./update-degree-documents";
+import FilePreviewModal from "../../../../components/Modals/FilePreviewModal/file-preview-modal";
 
 const ListDegreeDocuments = () => {
   const [documents, setDocuments] = useState<IDegreeDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IDegreeDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
@@ -76,6 +79,43 @@ const ListDegreeDocuments = () => {
     }
   };
 
+  const handlePreviewClick = (doc: IDegreeDocument) => {
+    const files = [
+      { key: 'topicComplainDoc', name: 'Solicitud de Tema', url: doc.topicComplainDoc },
+      { key: 'topicApprovalDoc', name: 'Aprobación de Tema', url: doc.topicApprovalDoc },
+      { key: 'tutorAssignmentDoc', name: 'Asignación de Tutor', url: doc.tutorAssignmentDoc },
+      { key: 'tutorFormatDoc', name: 'Formato de Tutor', url: doc.tutorFormatDoc },
+      { key: 'antiplagiarismDoc', name: 'Antiplagio', url: doc.antiplagiarismDoc },
+      { key: 'tutorLetter', name: 'Carta de Tutor', url: doc.tutorLetter },
+      { key: 'electiveGrade', name: 'Nota Electivo', url: doc.electiveGrade },
+      { key: 'academicClearance', name: 'Libre de Deuda', url: doc.academicClearance },
+    ];
+
+    const firstAvailableFile = files.find(file => file.url && file.url.trim() !== '');
+    
+    if (firstAvailableFile) {
+      setPreviewFile({
+        url: firstAvailableFile.url,
+        name: firstAvailableFile.name
+      });
+      setShowPreviewModal(true);
+    } else {
+      setOpenAlert({
+        open: true,
+        type: "warning",
+        title: "No hay archivos disponibles para previsualizar",
+      });
+    }
+  };
+
+  const handleFieldPreviewClick = (doc: IDegreeDocument, fieldKey: string, fieldName: string, fieldValue: string) => {
+    setPreviewFile({
+      url: fieldValue,
+      name: fieldName
+    });
+    setShowPreviewModal(true);
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -115,10 +155,7 @@ const ListDegreeDocuments = () => {
           { key: "electiveGrade", label: "Nota Electivo" },
           { key: "academicClearance", label: "Libre de Deuda" },
         ]}
-        // actionKeys={["EditarDocumentoGrado", "Refrescar"]}
-        // onEditClick={handleUpdateClick}
-        // onDeleteClick={handleDelete}
-        // onRefreshClick={handleRefresh}
+        onFieldPreviewClick={handleFieldPreviewClick}
       />
 
       {showUpdateModal && selectedDocument && (
@@ -126,6 +163,16 @@ const ListDegreeDocuments = () => {
           document={selectedDocument}
           onClose={() => setShowUpdateModal(false)}
           onUpdate={handleUpdateSuccess}
+        />
+      )}
+
+      {showPreviewModal && previewFile && (
+        <FilePreviewModal
+          open={showPreviewModal}
+          onClose={() => setShowPreviewModal(false)}
+          fileName={previewFile.name}
+          fileUrl={previewFile.url}
+          documentType="degree"
         />
       )}
     </>

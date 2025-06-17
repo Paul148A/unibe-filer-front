@@ -8,12 +8,15 @@ import { Typography, Button, Box } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import UpdateInscriptionDocumentsModal from "./update-inscription-documents";
+import FilePreviewModal from "../../../../components/Modals/FilePreviewModal/file-preview-modal";
 
 const ListInscriptionDocuments = () => {
   const [documents, setDocuments] = useState<IInscriptionDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IInscriptionDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
@@ -76,6 +79,41 @@ const ListInscriptionDocuments = () => {
     }
   };
 
+  const handlePreviewClick = (doc: IInscriptionDocument) => {
+    const files = [
+      { key: 'registrationDoc', name: 'Documento de Registro', url: doc.registrationDoc },
+      { key: 'semesterGradeChartDoc', name: 'Documento de Notas', url: doc.semesterGradeChartDoc },
+      { key: 'reEntryDoc', name: 'Documento de Reingreso', url: doc.reEntryDoc },
+      { key: 'englishCertificateDoc', name: 'Certificado de Inglés', url: doc.englishCertificateDoc },
+      { key: 'enrollmentCertificateDoc', name: 'Certificado de Matrícula', url: doc.enrollmentCertificateDoc },
+      { key: 'approvalDoc', name: 'Documento de Aprobación', url: doc.approvalDoc },
+    ];
+
+    const firstAvailableFile = files.find(file => file.url && file.url.trim() !== '');
+    
+    if (firstAvailableFile) {
+      setPreviewFile({
+        url: firstAvailableFile.url,
+        name: firstAvailableFile.name
+      });
+      setShowPreviewModal(true);
+    } else {
+      setOpenAlert({
+        open: true,
+        type: "warning",
+        title: "No hay archivos disponibles para previsualizar",
+      });
+    }
+  };
+
+  const handleFieldPreviewClick = (doc: IInscriptionDocument, fieldKey: string, fieldName: string, fieldValue: string) => {
+    setPreviewFile({
+      url: fieldValue,
+      name: fieldName
+    });
+    setShowPreviewModal(true);
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -113,10 +151,7 @@ const ListInscriptionDocuments = () => {
           { key: "enrollmentCertificateDoc", label: "Certificado de Matrícula" },
           { key: "approvalDoc", label: "Documento de Aprobación" },
         ]}
-        // actionKeys={["EditarDocumentoInscripcion", "Refrescar"]}
-        // onEditClick={handleUpdateClick}
-        // onDeleteClick={handleDelete}
-        // onRefreshClick={handleRefresh}
+        onFieldPreviewClick={handleFieldPreviewClick}
       />
 
       {showUpdateModal && selectedDocument && (
@@ -124,6 +159,16 @@ const ListInscriptionDocuments = () => {
           document={selectedDocument}
           onClose={() => setShowUpdateModal(false)}
           onUpdate={handleUpdateSuccess}
+        />
+      )}
+
+      {showPreviewModal && previewFile && (
+        <FilePreviewModal
+          open={showPreviewModal}
+          onClose={() => setShowPreviewModal(false)}
+          fileName={previewFile.name}
+          fileUrl={previewFile.url}
+          documentType="inscription"
         />
       )}
     </>

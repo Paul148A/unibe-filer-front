@@ -1,9 +1,9 @@
-// use-vertical-custom-table.ts
 import { useCallback } from 'react';
 import { Button, Stack } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
 export type ActionKey =
   | 'EditarDocumentoGrado'
@@ -13,6 +13,7 @@ export type ActionKey =
   | 'EditarDocumentoInscripcion'
   | 'EliminarDocumentoInscripcion'
   | 'Refrescar'
+  | 'Previsualizar'
   ;
 
 export type Column<T> = {
@@ -25,7 +26,8 @@ export function useVerticalCustomTable<T>(
   actions?: ActionKey[],
   onEditClick?: (row: T) => void,
   onDeleteClick?: (row: T) => void,
-  onRefreshClick?: () => void
+  onRefreshClick?: () => void,
+  onPreviewClick?: (row: T) => void
 ) {
   return useCallback(
     (row: T) => {
@@ -68,12 +70,17 @@ export function useVerticalCustomTable<T>(
               <RefreshIcon sx={{ color: 'white' }} />
             </Button>
           )}
+          {actions.includes('Previsualizar') && (
+            <Button size="small" sx={{ backgroundColor: 'orange', minWidth: '40px' }} onClick={() => onPreviewClick && onPreviewClick(row)}>
+              <VisibilityIcon sx={{ color: 'white' }} />
+            </Button>
+          )}
         </Stack>
       );
     },
-    [actions, onDeleteClick, onEditClick, onRefreshClick]
+    [actions, onDeleteClick, onEditClick, onRefreshClick, onPreviewClick]
   );
 }
 
 // Exportar iconos para uso en otros componentes
-export { EditIcon, DeleteIcon, RefreshIcon };
+export { EditIcon, DeleteIcon, RefreshIcon, VisibilityIcon };

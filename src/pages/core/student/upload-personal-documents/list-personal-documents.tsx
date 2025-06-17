@@ -8,12 +8,15 @@ import { Typography, Button, Box } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import UpdatePersonalDocumentsModal from "./update-personal-documents";
+import FilePreviewModal from "../../../../components/Modals/FilePreviewModal/file-preview-modal";
 
 const ListPersonalDocuments = () => {
   const [documents, setDocuments] = useState<IPersonalDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IPersonalDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
@@ -76,6 +79,39 @@ const ListPersonalDocuments = () => {
     }
   };
 
+  const handlePreviewClick = (doc: IPersonalDocument) => {
+    const files = [
+      { key: 'pictureDoc', name: 'Foto Carnet', url: doc.pictureDoc },
+      { key: 'dniDoc', name: 'Cédula de Identidad', url: doc.dniDoc },
+      { key: 'votingBallotDoc', name: 'Papeleta de Votación', url: doc.votingBallotDoc },
+      { key: 'notarizDegreeDoc', name: 'Título Notariado', url: doc.notarizDegreeDoc },
+    ];
+
+    const firstAvailableFile = files.find(file => file.url && file.url.trim() !== '');
+    
+    if (firstAvailableFile) {
+      setPreviewFile({
+        url: firstAvailableFile.url,
+        name: firstAvailableFile.name
+      });
+      setShowPreviewModal(true);
+    } else {
+      setOpenAlert({
+        open: true,
+        type: "warning",
+        title: "No hay archivos disponibles para previsualizar",
+      });
+    }
+  };
+
+  const handleFieldPreviewClick = (doc: IPersonalDocument, fieldKey: string, fieldName: string, fieldValue: string) => {
+    setPreviewFile({
+      url: fieldValue,
+      name: fieldName
+    });
+    setShowPreviewModal(true);
+  };
+
   if (loading) return <Loader />;
 
   return (
@@ -111,10 +147,7 @@ const ListPersonalDocuments = () => {
           { key: "votingBallotDoc", label: "Papeleta de Votación" },
           { key: "notarizDegreeDoc", label: "Título Notariado" },
         ]}
-        // actionKeys={["EditarDocumentoPersonal", "Refrescar"]}
-        // onEditClick={handleUpdateClick}
-        // onDeleteClick={handleDelete}
-        // onRefreshClick={handleRefresh}
+        onFieldPreviewClick={handleFieldPreviewClick}
       />
 
       {showUpdateModal && selectedDocument && (
@@ -122,6 +155,16 @@ const ListPersonalDocuments = () => {
           document={selectedDocument}
           onClose={() => setShowUpdateModal(false)}
           onUpdate={handleUpdateSuccess}
+        />
+      )}
+
+      {showPreviewModal && previewFile && (
+        <FilePreviewModal
+          open={showPreviewModal}
+          onClose={() => setShowPreviewModal(false)}
+          fileName={previewFile.name}
+          fileUrl={previewFile.url}
+          documentType="personal"
         />
       )}
     </>
