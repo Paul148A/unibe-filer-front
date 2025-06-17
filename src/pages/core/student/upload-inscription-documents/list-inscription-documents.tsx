@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { InscriptionDocument } from "../../../../interfaces/IInscriptionDocument";
+import { IInscriptionDocument } from "../../../../interfaces/IInscriptionDocument";
 import { getAllInscriptionDocuments, deleteInscriptionDocument } from "../../../../services/upload-files/inscription-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import CustomTable from "../../../../components/CustomTable/custom-table";
@@ -11,9 +11,9 @@ import UpdateInscriptionDocumentsModal from "./update-inscription-documents";
 
 const ListInscriptionDocuments = () => {
   const navigate = useNavigate();
-  const [documents, setDocuments] = useState<InscriptionDocument[]>([]);
+  const [documents, setDocuments] = useState<IInscriptionDocument[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedDocument, setSelectedDocument] = useState<InscriptionDocument | null>(null);
+  const [selectedDocument, setSelectedDocument] = useState<IInscriptionDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const { setOpenAlert } = useAuth();
 
@@ -36,7 +36,7 @@ const ListInscriptionDocuments = () => {
     fetchDocuments();
   }, []);
 
-  const handleDelete = async (doc: InscriptionDocument) => {
+  const handleDelete = async (doc: IInscriptionDocument) => {
     try {
       await deleteInscriptionDocument(doc.id);
       setOpenAlert({
@@ -55,7 +55,7 @@ const ListInscriptionDocuments = () => {
     }
   };
 
-  const handleUpdateClick = (doc: InscriptionDocument) => {
+  const handleUpdateClick = (doc: IInscriptionDocument) => {
     setSelectedDocument(doc);
     setShowUpdateModal(true);
   };
@@ -85,7 +85,7 @@ const ListInscriptionDocuments = () => {
         </Button>
       </Box>
 
-      <CustomTable<InscriptionDocument>
+      <CustomTable<IInscriptionDocument>
         data={documents}
         columns={[
           { key: "registrationDoc", label: "Documento de Registro" },
