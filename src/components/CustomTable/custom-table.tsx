@@ -13,6 +13,7 @@ interface Props<T> {
   renderActions?: (row: T) => React.ReactNode;
   onEditClick?: (row: T) => void;
   onDeleteClick?: (row: T) => void;
+  onDownloadClick?: (row: T) => void;
 }
 
 const CustomTable = <T,>({
@@ -22,8 +23,9 @@ const CustomTable = <T,>({
   renderActions,
   onEditClick,
   onDeleteClick,
+  onDownloadClick,
 }: Props<T>) => {
-  const getActions = useCustomTable<T>(actionKeys, onEditClick, onDeleteClick);
+  const getActions = useCustomTable<T>(actionKeys, onEditClick, onDeleteClick, onDownloadClick);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
@@ -63,3 +65,6 @@ const CustomTable = <T,>({
 };
 
 export default CustomTable
+
+
+

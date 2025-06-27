@@ -28,6 +28,9 @@ const UseLoginForm = () => {
               case "Estudiante":
                 navigate("/student-dashboard");
                 break;
+              case "Docente":
+                navigate("/teacher-dashboard");
+                break;
               case "Idioma":
                 navigate("/language-dashboard");
                 break;

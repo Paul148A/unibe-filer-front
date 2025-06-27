@@ -18,6 +18,10 @@ import LanguageDashboard from "../pages/core/language/language-dashboard/languag
 import RecordPage from "../pages/core/admin/records/record-page";
 import CertificaList from "../pages/core/language/manage-certificates/certificates-list";
 import CertificatePage from "../pages/core/language/manage-certificates/certificates-page";
+import TeacherDashboard from "../pages/core/teacher/teacher-dashboard/teacher-dashboard";
+import UploadPermissionDocuments from "../pages/core/teacher/manage-permissions/upload-permission-documents";
+import ListPermissionDocuments from "../pages/core/teacher/manage-permissions/list-permission-documents";
+import UpdatePermissionDocuments from "../pages/core/teacher/manage-permissions/update-permission-documents";
 
 const AppRouter = () => {
   return (
@@ -61,6 +65,16 @@ const AppRouter = () => {
             <Route path="/language-dashboard" element={<LanguageDashboard />} />
             <Route path="/certificates-language-list" element={<CertificaList />} />
             <Route path="/certificates-language-page/:id" element={<CertificatePage />} />
+          </Route>
+
+        {/* Teacher */}
+          <Route element={<Auth allowedRoles={["teacher"]} />}>
+            <Route path="/teacher-dashboard" element={<TeacherDashboard />} />
+            
+            {/* Rutas manejo de permisos */}
+            <Route path="/teacher/manage-permissions/upload-permission-documents" element={<UploadPermissionDocuments />} />
+            <Route path="/teacher/manage-permissions/list-permission-documents" element={<ListPermissionDocuments />} />
+            <Route path="/teacher/manage-permissions/update-permission-documents/:id" element={<UpdatePermissionDocuments />} />
           </Route>
         </Route>
 

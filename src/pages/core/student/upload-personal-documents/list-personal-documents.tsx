@@ -147,6 +147,7 @@ const ListPersonalDocuments = () => {
           { key: "votingBallotDoc", label: "Papeleta de Votación" },
           { key: "notarizDegreeDoc", label: "Título Notariado" },
         ]}
+        actionKeys={['Previsualizar']}
         onFieldPreviewClick={handleFieldPreviewClick}
       />
 

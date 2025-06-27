@@ -26,9 +26,14 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
 
   const handleFileChange = (field: keyof typeof files) => 
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file && file.type !== 'application/pdf') {
+        setOpenAlert({ open: true, type: 'error', title: 'Solo se permiten archivos PDF' });
+        return;
+      }
       setFiles(prev => ({
         ...prev,
-        [field]: e.target.files?.[0] || undefined
+        [field]: file || undefined
       }));
     };
 

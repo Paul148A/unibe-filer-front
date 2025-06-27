@@ -151,6 +151,7 @@ const ListInscriptionDocuments = () => {
           { key: "enrollmentCertificateDoc", label: "Certificado de Matrícula" },
           { key: "approvalDoc", label: "Documento de Aprobación" },
         ]}
+        actionKeys={['Previsualizar']}
         onFieldPreviewClick={handleFieldPreviewClick}
       />
 

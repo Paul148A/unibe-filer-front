@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import DownloadIcon from '@mui/icons-material/Download';
 import { Link } from 'react-router-dom';
 import { IRecord } from '../../../interfaces/IRecord';
 
@@ -20,6 +21,9 @@ export type ActionKey =
   | 'EliminarDocumentoInscripcion'
   | 'RevisarExpediente'
   | 'RevisarCertificadoIngles'
+  | 'DescargarDocumentoPermiso'
+  | 'EditarDocumentoPermiso'
+  | 'EliminarDocumentoPermiso'
   ;
 
 export type Column<T> = {
@@ -31,7 +35,8 @@ export type Column<T> = {
 export function useCustomTable<T>(
   actions?: ActionKey[],
   onEditClick?: (row: T) => void,
-  onDeleteClick?: (row: T) => void
+  onDeleteClick?: (row: T) => void,
+  onDownloadClick?: (row: T) => void
 ) {
   return useCallback(
     (row: T) => {
@@ -50,7 +55,7 @@ export function useCustomTable<T>(
             </Button>
           )}
           {actions.includes('VisualizarPdf') && (
-            <Button size="small" sx={{backgroundColor: 'yellow'}} onClick={() => console.log('Editar', row)}>
+            <Button size="small" sx={{backgroundColor: 'orange'}} onClick={() => console.log('Editar', row)}>
               <VisibilityIcon sx={{color: 'white'}} />
             </Button>
           )}
@@ -99,9 +104,24 @@ export function useCustomTable<T>(
               <VisibilityIcon sx={{ color: 'white' }} />
             </Button>
           )}
+          {actions.includes('DescargarDocumentoPermiso') && (
+            <Button size="small" sx={{backgroundColor: 'green'}} onClick={() => onDownloadClick && onDownloadClick(row)}>
+              <DownloadIcon sx={{color: 'white'}} />
+            </Button>
+          )}
+          {actions.includes('EditarDocumentoPermiso') && (
+            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => onEditClick && onEditClick(row)}>
+              <EditIcon sx={{color: 'white'}} />
+            </Button>
+          )}
+          {actions.includes('EliminarDocumentoPermiso') && (
+            <Button size="small" sx={{backgroundColor: 'red'}} onClick={() => onDeleteClick && onDeleteClick(row)}>
+              <DeleteIcon sx={{color: 'white'}} />
+            </Button>
+          )}
         </Stack>
-      );
+      ); 
     },
-    [actions]
+    [actions, onEditClick, onDeleteClick, onDownloadClick]
   );
 }

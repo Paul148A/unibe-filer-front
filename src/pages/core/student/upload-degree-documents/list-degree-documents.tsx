@@ -155,6 +155,7 @@ const ListDegreeDocuments = () => {
           { key: "electiveGrade", label: "Nota Electivo" },
           { key: "academicClearance", label: "Libre de Deuda" },
         ]}
+        actionKeys={['Previsualizar']}
         onFieldPreviewClick={handleFieldPreviewClick}
       />
 

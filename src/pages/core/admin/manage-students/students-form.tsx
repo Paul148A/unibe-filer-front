@@ -40,6 +40,7 @@ const StudentsForm = () => {
     password: '',
     role_id: '',
     status_id: '',
+    is_approved: true,
   });
 
   const [roles, setRoles] = useState<Role[]>([]);
@@ -78,7 +79,6 @@ const StudentsForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    console.log(`Campo ${name} cambiado a: ${value}`); // Debug log
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -102,6 +102,7 @@ const StudentsForm = () => {
         password: formData.password,
         role: formData.role_id,
         status: formData.status_id,
+        is_approved: true,
       };
       await axios.post('http://localhost:3000/api1/users', userData);
       setOpenAlert({ open: true, type: "success", title: "Usuario creado con éxito" });
@@ -115,6 +116,7 @@ const StudentsForm = () => {
         password: '',
         role_id: '',
         status_id: '',
+        is_approved: true,
       });
     } catch (error: any) {
       console.error(error);

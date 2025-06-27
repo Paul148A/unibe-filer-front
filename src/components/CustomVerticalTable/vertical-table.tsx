@@ -29,27 +29,33 @@ const VerticalTable = <T,>({
   const getActions = useVerticalCustomTable<T>(actionKeys, onEditClick, onDeleteClick, onRefreshClick, onPreviewClick);
 
   const renderFieldValue = (value: any, row: T, column: Column<T>) => {
+    if (value === null || value === undefined || String(value).trim() === '') {
+      return '-';
+    }
     const stringValue = String(value);
     
     if (stringValue && stringValue.trim() !== '' && onFieldPreviewClick) {
       return (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span style={{ flex: 1 }}>{stringValue}</span>
-          <Tooltip title={`Previsualizar ${column.label}`}>
-            <IconButton
-              size="small"
-              onClick={() => onFieldPreviewClick(row, column.key as string, column.label, stringValue)}
-              sx={{ 
-                backgroundColor: 'orange', 
-                color: 'white',
-                '&:hover': { backgroundColor: 'darkorange' },
-                width: '32px',
-                height: '32px'
-              }}
-            >
-              <VisibilityIcon fontSize="small" />
-            </IconButton>
-          </Tooltip>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+            <span style={{ fontSize: '0.75rem', color: '#888', marginBottom: '2px' }}>Acciones</span>
+            <Tooltip title={`Previsualizar ${column.label}`}>
+              <IconButton
+                size="small"
+                onClick={() => onFieldPreviewClick(row, column.key as string, column.label, stringValue)}
+                sx={{ 
+                  backgroundColor: 'orange', 
+                  color: 'white',
+                  '&:hover': { backgroundColor: 'darkorange' },
+                  width: '32px',
+                  height: '32px'
+                }}
+              >
+                <VisibilityIcon fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </div>
         </div>
       );
     }
@@ -63,35 +69,43 @@ const VerticalTable = <T,>({
           <TableRow>
             <TableCell sx={{ fontWeight: 'bold', width: '30%' }}>Tipo</TableCell>
             <TableCell sx={{ fontWeight: 'bold' }}>Nombre</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }}>Acciones</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {data.map((row, rowIndex) => (
-            <React.Fragment key={`row-${rowIndex}`}>
-              {columns.map((column, colIndex) => {
-                const value = row[column.key as keyof T];
-                return (
-                  <TableRow key={`${rowIndex}-${colIndex}`}>
-                    <TableCell sx={{ fontWeight: 'bold', width: '30%', backgroundColor: '#0000' }}>
-                      {column.label}
-                    </TableCell>
-                    <TableCell>
-                      {column.render ? column.render(value, row) : renderFieldValue(value, row, column)}
-                    </TableCell>
-                  </TableRow>
-                );
-              })}
-              {(renderActions || actionKeys) && (
-                <TableRow key={`${rowIndex}-actions`}>
+            columns.map((column, colIndex) => {
+              const value = row[column.key as keyof T];
+              return (
+                <TableRow key={`${rowIndex}-${colIndex}`}>
                   <TableCell sx={{ fontWeight: 'bold', width: '30%', backgroundColor: '#0000' }}>
-                    Acciones
+                    {column.label}
                   </TableCell>
                   <TableCell>
-                    {renderActions ? renderActions(row) : getActions(row)}
+                    {column.render ? column.render(value, row) : (value === null || value === undefined || String(value).trim() === '' ? '-' : String(value))}
+                  </TableCell>
+                  <TableCell>
+                    {(value && String(value).trim() !== '' && onFieldPreviewClick) ? (
+                      <Tooltip title={`Previsualizar ${column.label}`}>
+                        <IconButton
+                          size="small"
+                          onClick={() => onFieldPreviewClick(row, column.key as string, column.label, String(value))}
+                          sx={{ 
+                            backgroundColor: 'orange', 
+                            color: 'white',
+                            '&:hover': { backgroundColor: 'darkorange' },
+                            width: '32px',
+                            height: '32px'
+                          }}
+                        >
+                          <VisibilityIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    ) : null}
                   </TableCell>
                 </TableRow>
-              )}
-            </React.Fragment>
+              );
+            })
           ))}
         </TableBody>
       </Table>
