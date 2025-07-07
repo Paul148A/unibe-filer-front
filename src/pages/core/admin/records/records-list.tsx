@@ -52,13 +52,12 @@ const RecordsList = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h2" gutterBottom>
+      <Typography sx={{ mb: 2 , ml: 5, mt: 2 }} variant="h4" component="h2" gutterBottom>
         Lista de Expedientes
       </Typography>
-
-      <Box sx={{ mb: 2 }}>
+      <Box sx={{ ml: 5 }}>
         <TextField
-          fullWidth
+          sx={{ width: 350 }}
           variant="outlined"
           label="Buscar por nombre, identificación, correo o código"
           value={searchText}

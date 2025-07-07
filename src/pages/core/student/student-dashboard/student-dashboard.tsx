@@ -1,7 +1,9 @@
 import { Grid2 } from "@mui/material";
 import Section from "../../../../components/Section/section";
+import { useAuth } from "../../../../components/Context/context";
 
 const StudentDashboard = () => {
+  const { record } = useAuth();
   return (
     <>
       <Grid2 container sx={{ marginBottom: 1 }}>
@@ -16,7 +18,7 @@ const StudentDashboard = () => {
         <Grid2 size={4}>
           <Section
             img="/inscriptionimg.png"
-            link="/list-inscription-documents"
+            link={`/list-inscription-documents/${record?.id}`}
             title="Documentos de Inscripción"
             description="Consulta o ingresa tus documentos de inscripción."
           />

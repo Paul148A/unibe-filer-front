@@ -1,28 +1,34 @@
 import { useEffect, useState } from "react";
 import { IInscriptionDocument } from "../../../../interfaces/IInscriptionDocument";
-import { getAllInscriptionDocuments } from "../../../../services/upload-files/inscription-documents.service";
+import { getAllInscriptionDocuments, getInscriptionDocumentsByRecordId } from "../../../../services/upload-files/inscription-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import VerticalTable from "../../../../components/CustomVerticalTable/vertical-table";
 import Loader from "../../../../components/Loader/loader";
-import { Typography, Button, Box } from "@mui/material";
+import { Typography, Button, Box, Dialog, DialogTitle, IconButton, DialogContent } from "@mui/material";
 import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import UpdateInscriptionDocumentsModal from "./update-inscription-documents";
 import FilePreviewModal from "../../../../components/Modals/FilePreviewModal/file-preview-modal";
+import CloseIcon from '@mui/icons-material/Close';
+import GradeModal from "../../../../components/GradeModal/grade-modal";
+import { useParams } from "react-router-dom";
+
 
 const ListInscriptionDocuments = () => {
-  const [documents, setDocuments] = useState<IInscriptionDocument[]>([]);
+  const {recordId} = useParams<{ recordId: string }>();
+  const [documents, setDocuments] = useState<IInscriptionDocument>();
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IInscriptionDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
+  const [openGradeModal, setOpenGradeModal] = useState(false);
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
     const fetchDocuments = async () => {
       try {
-        const docs = await getAllInscriptionDocuments();
+        const docs = await getInscriptionDocumentsByRecordId(recordId|| '');
         setDocuments(docs);
       } catch (error) {
         setOpenAlert({
@@ -41,6 +47,14 @@ const ListInscriptionDocuments = () => {
   const handleUpdateClick = (doc: IInscriptionDocument) => {
     setSelectedDocument(doc);
     setShowUpdateModal(true);
+  };
+
+  const handleGradeClick = () => {
+    setOpenGradeModal(true);
+  };
+
+  const handleCloseGradeModal = () => {
+    setOpenGradeModal(false);
   };
 
   const handleUpdateSuccess = () => {
@@ -90,7 +104,7 @@ const ListInscriptionDocuments = () => {
     ];
 
     const firstAvailableFile = files.find(file => file.url && file.url.trim() !== '');
-    
+
     if (firstAvailableFile) {
       setPreviewFile({
         url: firstAvailableFile.url,
@@ -123,6 +137,14 @@ const ListInscriptionDocuments = () => {
           Lista de Documentos de Inscripción
         </Typography>
         <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant="outlined"
+            startIcon={<EditIcon />}
+            onClick={handleGradeClick}
+            //disabled={documents}
+          >
+            Agregar documento de notas
+          </Button>
           <Button
             variant="outlined"
             startIcon={<EditIcon />}
@@ -172,6 +194,27 @@ const ListInscriptionDocuments = () => {
           documentType="inscription"
         />
       )}
+
+      <Dialog open={openGradeModal} onClose={handleCloseGradeModal}>
+        <DialogTitle>
+          Subir documento de notas
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseGradeModal}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <GradeModal inscriptionId={documents.id}/>
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

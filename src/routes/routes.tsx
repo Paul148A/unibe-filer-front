@@ -49,7 +49,7 @@ const AppRouter = () => {
             
             {/* Rutas documentos de inscripcion */}
             <Route path="/upload-inscription-documents" element={<UploadInscriptionDocuments />} />
-            <Route path="/list-inscription-documents" element={<ListInscriptionDocuments />} />
+            <Route path="/list-inscription-documents/:recordId" element={<ListInscriptionDocuments />} />
             
             {/* Rutas documentos de grado */}
             <Route path="/upload-degree-documents" element={<UploadDegreeDocuments />} />

@@ -34,7 +34,7 @@ const StudentsList = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h2" gutterBottom>
+      <Typography sx={{ mb: 2 , ml: 5, mt: 2 }} variant="h4" component="h2" gutterBottom>
         Lista de Usuarios
       </Typography>
       <CustomTable<IUser>
