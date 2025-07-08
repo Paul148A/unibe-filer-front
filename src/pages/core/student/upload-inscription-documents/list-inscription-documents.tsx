@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { IInscriptionDocument } from "../../../../interfaces/IInscriptionDocument";
-import { getAllInscriptionDocuments, getInscriptionDocumentsByRecordId } from "../../../../services/upload-files/inscription-documents.service";
+import { getInscriptionDocumentsByRecordId } from "../../../../services/upload-files/inscription-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import VerticalTable from "../../../../components/CustomVerticalTable/vertical-table";
 import Loader from "../../../../components/Loader/loader";
@@ -127,7 +127,7 @@ const ListInscriptionDocuments = () => {
     }
   };
 
-  const handleFieldPreviewClick = (doc: IInscriptionDocument, fieldKey: string, fieldName: string, fieldValue: string) => {
+  const handleFieldPreviewClick = (_doc: IInscriptionDocument, _fieldKey: string, fieldName: string, fieldValue: string) => {
     setPreviewFile({
       url: fieldValue,
       name: fieldName
@@ -168,6 +168,13 @@ const ListInscriptionDocuments = () => {
             onClick={handleRefresh}
           >
             Refrescar
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => documents && handlePreviewClick(documents)}
+            disabled={!documents}
+          >
+            Previsualizar
           </Button>
         </Box>
       </Box>

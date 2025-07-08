@@ -115,7 +115,7 @@ const ListDegreeDocuments = () => {
     }
   };
 
-  const handleFieldPreviewClick = (doc: IDegreeDocument, fieldKey: string, fieldName: string, fieldValue: string) => {
+  const handleFieldPreviewClick = (_doc: IDegreeDocument, _fieldKey: string, fieldName: string, fieldValue: string) => {
     setPreviewFile({
       url: fieldValue,
       name: fieldName
@@ -147,6 +147,13 @@ const ListDegreeDocuments = () => {
             onClick={handleRefresh}
           >
             Refrescar
+          </Button>
+          <Button
+            variant="outlined"
+            onClick={() => documents && handlePreviewClick(documents)}
+            disabled={!documents}
+          >
+            Previsualizar
           </Button>
         </Box>
       </Box>
