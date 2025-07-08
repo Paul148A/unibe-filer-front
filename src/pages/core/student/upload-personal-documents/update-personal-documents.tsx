@@ -45,6 +45,12 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
       return;
     }
 
+    if (!document.id) {
+      setOpenAlert({ open: true, type: "error", title: "No se encontró el ID del documento." });
+      setIsUpdating(false);
+      return;
+    }
+
     setIsUpdating(true);
     const formData = new FormData();
 
@@ -90,7 +96,7 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
                   pictureDoc: prev.pictureDoc ? undefined : new File([], '')
                 }))}
               />
-              Foto tamaño carnet (actual: {document.pictureDoc})
+              Foto tamaño carnet (actual: {document.pictureDoc || "No subido"})
             </label>
             {files.pictureDoc !== undefined && (
               <input 
@@ -112,7 +118,7 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
                   dniDoc: prev.dniDoc ? undefined : new File([], '')
                 }))}
               />
-              Cedula de identidad (actual: {document.dniDoc})
+              Cedula de identidad (actual: {document.dniDoc || "No subido"})
             </label>
             {files.dniDoc !== undefined && (
               <input 
@@ -134,7 +140,7 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
                   votingBallotDoc: prev.votingBallotDoc ? undefined : new File([], '')
                 }))}
               />
-              Papeleta de votación (actual: {document.votingBallotDoc})
+              Papeleta de votación (actual: {document.votingBallotDoc || "No subido"})
             </label>
             {files.votingBallotDoc !== undefined && (
               <input 
@@ -156,7 +162,7 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
                   notarizDegreeDoc: prev.notarizDegreeDoc ? undefined : new File([], '')
                 }))}
               />
-              Título notariado (actual: {document.notarizDegreeDoc})
+              Título notariado (actual: {document.notarizDegreeDoc || "No subido"})
             </label>
             {files.notarizDegreeDoc !== undefined && (
               <input 

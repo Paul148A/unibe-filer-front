@@ -14,10 +14,10 @@ import RecordSection from "../../../../components/RecordSection/record-section";
 
 const RecordPage = () => {
     const { id } = useParams<{ id: string }>();
-    const [record, setRecord] = useState<IRecord[]>([]);
-    const [personalDocs, setPersonalDocs] = useState<IPersonalDocument>();
-    const [degreeDocs, setDegreeDocs] = useState<IDegreeDocument>();
-    const [inscriptionDocs, setInscriptionDocs] = useState<IInscriptionDocument>();
+    const [record, setRecord] = useState<IRecord | null>(null);
+    const [personalDocs, setPersonalDocs] = useState<IPersonalDocument | null>(null);
+    const [degreeDocs, setDegreeDocs] = useState<IDegreeDocument | null>(null);
+    const [inscriptionDocs, setInscriptionDocs] = useState<IInscriptionDocument | null>(null);
     const { setOpenAlert } = useAuth();
 
     useEffect(() => {
@@ -32,9 +32,8 @@ const RecordPage = () => {
                     });
                     return;
                 }
-                const record = await getRecordByUserId(id);
-                console.log("Record fetched:", record);
-                if (!record || record.length === 0) {
+                const recordArr = await getRecordByUserId(id);
+                if (!recordArr || recordArr.length === 0) {
                     setOpenAlert({
                         open: true,
                         type: "error",
@@ -42,15 +41,16 @@ const RecordPage = () => {
                     });
                     return;
                 }
-                setRecord(record);
-                const personalDocuments = await getPersonalDocumentsByRecordId(record[0]?.id);
-                setPersonalDocs(personalDocuments[0]);
-                const degreeDocuments = await getDegreeDocumentsByRecordId(record[0]?.id);
-                setDegreeDocs(degreeDocuments[0]);
-                const inscriptionDocuments = await getInscriptionDocumentsByRecordId(record[0]?.id);
-                setInscriptionDocs(inscriptionDocuments[0]);
+                const recordData = recordArr[0];
+                setRecord(recordData);
+                const personalDocuments = await getPersonalDocumentsByRecordId(recordData.id);
+                setPersonalDocs(personalDocuments);
+                const degreeDocuments = await getDegreeDocumentsByRecordId(recordData.id);
+                setDegreeDocs(degreeDocuments);
+                const inscriptionDocuments = await getInscriptionDocumentsByRecordId(recordData.id);
+                setInscriptionDocs(inscriptionDocuments);
 
-                if (!personalDocuments || personalDocuments.length === 0 || !degreeDocuments || degreeDocuments.length === 0 || !inscriptionDocuments || inscriptionDocuments.length === 0) {
+                if (!personalDocuments || !degreeDocuments || !inscriptionDocuments) {
                     setOpenAlert({
                         open: true,
                         type: "error",
@@ -73,7 +73,7 @@ const RecordPage = () => {
             <Grid2 sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Grid2 sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2 }}>
                     <Typography sx={{ p: 2, mt: 1 }} variant="h5" component="h3" gutterBottom>
-                        Expediente del estudiante: {record[0]?.user?.names} {record[0]?.user?.last_names}
+                        Expediente del estudiante: {record?.user?.names} {record?.user?.last_names}
                     </Typography>
                     <Grid2 container sx={{
                         justifyContent: "center",

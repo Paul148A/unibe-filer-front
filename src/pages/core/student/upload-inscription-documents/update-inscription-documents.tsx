@@ -47,6 +47,12 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
       return;
     }
 
+    if (!document.id) {
+      setOpenAlert({ open: true, type: "error", title: "No se encontró el ID del documento." });
+      setIsUpdating(false);
+      return;
+    }
+
     setIsUpdating(true);
     const formData = new FormData();
 
@@ -94,7 +100,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
                   registrationDoc: prev.registrationDoc ? undefined : new File([], '')
                 }))}
               />
-              Documento de Registro (actual: {document.registrationDoc})
+              Documento de Registro (actual: {document.registrationDoc || "No subido"})
             </label>
             {files.registrationDoc !== undefined && (
               <input 
@@ -116,7 +122,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
                   semesterGradeChartDoc: prev.semesterGradeChartDoc ? undefined : new File([], '')
                 }))}
               />
-              Boletín de Notas (actual: {document.semesterGradeChartDoc})
+              Boletín de Notas (actual: {document.semesterGradeChartDoc || "No subido"})
             </label>
             {files.semesterGradeChartDoc !== undefined && (
               <input 
@@ -138,7 +144,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
                   reEntryDoc: prev.reEntryDoc ? undefined : new File([], '')
                 }))}
               />
-              Documento de Reingreso (actual: {document.reEntryDoc})
+              Documento de Reingreso (actual: {document.reEntryDoc || "No subido"})
             </label>
             {files.reEntryDoc !== undefined && (
               <input 
@@ -160,7 +166,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
                   englishCertificateDoc: prev.englishCertificateDoc ? undefined : new File([], '')
                 }))}
               />
-              Certificado de Inglés (actual: {document.englishCertificateDoc})
+              Certificado de Inglés (actual: {document.englishCertificateDoc || "No subido"})
             </label>
             {files.englishCertificateDoc !== undefined && (
               <input 
@@ -182,7 +188,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
                   enrollmentCertificateDoc: prev.enrollmentCertificateDoc ? undefined : new File([], '')
                 }))}
               />
-              Certificado de Matrícula (actual: {document.enrollmentCertificateDoc})
+              Certificado de Matrícula (actual: {document.enrollmentCertificateDoc || "No subido"})
             </label>
             {files.enrollmentCertificateDoc !== undefined && (
               <input 
@@ -204,7 +210,7 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
                   approvalDoc: prev.approvalDoc ? undefined : new File([], '')
                 }))}
               />
-              Documento de Aprobación (actual: {document.approvalDoc})
+              Documento de Aprobación (actual: {document.approvalDoc || "No subido"})
             </label>
             {files.approvalDoc !== undefined && (
               <input 

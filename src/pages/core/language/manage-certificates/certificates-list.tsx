@@ -5,9 +5,9 @@ import { IUser } from "../../../../interfaces/IUser";
 import { useAuth } from "../../../../components/Context/context";
 import CustomTable from "../../../../components/CustomTable/custom-table";
 import { getAllRecords } from "../../../../services/upload-files/record.service";
-import { getInscriptionDocumentsByRecordId, updateInscriptionDocumentStatus } from "../../../../services/upload-files/inscription-documents.service";
+import { getInscriptionDocumentsByRecordId, updateInscriptionDocumentStatus, downloadInscriptionDocument } from "../../../../services/upload-files/inscription-documents.service";
 import Loader from "../../../../components/Loader/loader";
-import { Typography, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Typography, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem, Button } from "@mui/material";
 
 interface RecordWithInscription extends IRecord {
   inscriptionDocuments?: IInscriptionDocument[];
@@ -25,10 +25,10 @@ const CertificatesList = () => {
       const records = await getAllRecords();
       const recordsWithInscription = await Promise.all(
         records.map(async (record) => {
-          const inscriptionDocs = await getInscriptionDocumentsByRecordId(record.id);
+          const inscriptionDoc = await getInscriptionDocumentsByRecordId(record.id);
           return {
             ...record,
-            inscriptionDocuments: inscriptionDocs
+            inscriptionDocuments: inscriptionDoc ? [inscriptionDoc] : []
           };
         })
       );
@@ -177,7 +177,7 @@ const CertificatesList = () => {
                 </Typography>
               );
             }
-          }
+          },
         ]}
         actionKeys={["RevisarCertificadoIngles"]}
       />

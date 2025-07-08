@@ -85,7 +85,7 @@ const UploadDegreeDocuments: React.FC = () => {
       });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
       setTimeout(() => {
-        navigate('/list-degree-documents');
+        navigate(`/list-degree-documents/${record?.id}`);
       }, 1500);
     } catch (error: any) {
       setOpenAlert({ open: true, type: "error", title: "" + error });
@@ -101,7 +101,7 @@ const UploadDegreeDocuments: React.FC = () => {
         <Button
           variant="outlined"
           startIcon={<ListAltIcon />}
-          onClick={() => navigate('/list-degree-documents')}
+          onClick={() => navigate(`/list-degree-documents/${record?.id}`)}
         >
           Ver Lista de Documentos
         </Button>

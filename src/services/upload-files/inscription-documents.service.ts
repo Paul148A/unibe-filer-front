@@ -22,9 +22,9 @@ export const deleteInscriptionDocument = async (id: string): Promise<void> => {
 };
 
 export const getInscriptionDocumentsByRecordId = async (recordId: string): Promise<IInscriptionDocument> => {
-  const response = await axiosInstance.get<GetInscriptionDocumentsResponse>(`${ENDPOINT}/record/${recordId}`);
-  return response.data.data[0]; 
-}
+  const response = await axiosInstance.get<{ message: string, data: IInscriptionDocument }>(`${ENDPOINT}/record/${recordId}`);
+  return response.data.data;
+};
 
 export const downloadInscriptionDocument = async (id: string, documentType: string) => {
   try {

@@ -10,8 +10,8 @@ import CertificateSection from "../../../../components/CertificateSection/certif
 
 const CertificatePage = () => {
     const { id } = useParams<{ id: string }>();
-    const [record, setRecord] = useState<IRecord[]>([]);
-    const [inscriptionDocs, setInscriptionDocs] = useState<IInscriptionDocument>();
+    const [record, setRecord] = useState<IRecord | null>(null);
+    const [inscriptionDocs, setInscriptionDocs] = useState<IInscriptionDocument | null>(null);
     const { setOpenAlert } = useAuth();
 
     const handleStatusChange = async (newStatus: 'approved' | 'rejected' | 'pending') => {
@@ -35,9 +35,8 @@ const CertificatePage = () => {
                     });
                     return;
                 }
-                const record = await getRecordByUserId(id);
-                console.log("Record fetched:", record);
-                if (!record || record.length === 0) {
+                const recordDataArr = await getRecordByUserId(id);
+                if (!recordDataArr || recordDataArr.length === 0) {
                     setOpenAlert({
                         open: true,
                         type: "error",
@@ -45,11 +44,19 @@ const CertificatePage = () => {
                     });
                     return;
                 }
-                setRecord(record);
-                const inscriptionDocuments = await getInscriptionDocumentsByRecordId(record[0]?.id);
-                setInscriptionDocs(inscriptionDocuments[0]);
-
-                if (!inscriptionDocuments || inscriptionDocuments.length === 0) {
+                const recordData = recordDataArr[0];
+                setRecord(recordData);
+                if (!recordData?.id) {
+                    setOpenAlert({
+                        open: true,
+                        type: "error",
+                        title: "El expediente no tiene un ID válido",
+                    });
+                    return;
+                }
+                const inscriptionDocument = await getInscriptionDocumentsByRecordId(recordData.id);
+                setInscriptionDocs(inscriptionDocument);
+                if (!inscriptionDocument) {
                     setOpenAlert({
                         open: true,
                         type: "error",
@@ -66,7 +73,7 @@ const CertificatePage = () => {
         <>
             <Grid2>
                 <Typography sx={{ p: 2, mt: 1 }} variant="h5" component="h3" gutterBottom>
-                    {/* Certificado de ingles del estudiante: {record[0]?.user?.names} {record[0]?.user?.last_names} */}
+                    {/* Certificado de ingles del estudiante: {record?.user?.names} {record?.user?.last_names} */}
                 </Typography>
             </Grid2>
             <Grid2 sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -89,7 +96,7 @@ const CertificatePage = () => {
                                         englishCertificateStatus: inscriptionDocs.englishCertificateStatus
                                     }}
                                     img='/downloaddocuments.png'
-                                    title={`Certificado de inglés de: ${record[0]?.user?.names} ${record[0]?.user?.last_names}`}
+                                    title={`Certificado de inglés de: ${record?.user?.names} ${record?.user?.last_names}`}
                                     description=''
                                     sectionType='inscription'
                                     documentId={inscriptionDocs.id}

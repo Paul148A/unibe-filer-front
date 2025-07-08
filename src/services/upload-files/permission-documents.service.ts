@@ -8,8 +8,9 @@ export class PermissionDocumentsService {
   ): Promise<{ message: string; data: IPermissionDocument }> {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('recordId', recordId);
     const response = await axios.post(
-      `/api1/permission/upload-permission-document/${recordId}`,
+      `/api1/permission/upload-permission-document/`,
       formData,
       {
         headers: {

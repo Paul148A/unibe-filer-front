@@ -16,7 +16,7 @@ import { useParams } from "react-router-dom";
 
 const ListInscriptionDocuments = () => {
   const {recordId} = useParams<{ recordId: string }>();
-  const [documents, setDocuments] = useState<IInscriptionDocument>();
+  const [documents, setDocuments] = useState<IInscriptionDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IInscriptionDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -26,9 +26,16 @@ const ListInscriptionDocuments = () => {
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
+    if (!recordId) {
+      setLoading(false);
+      setDocuments(null);
+      return;
+    }
+    const cleanRecordId = recordId.replace(':recordId', '');
     const fetchDocuments = async () => {
       try {
-        const docs = await getInscriptionDocumentsByRecordId(recordId|| '');
+        const docs = await getInscriptionDocumentsByRecordId(cleanRecordId);
+        console.log('documentos de inscripcion:', docs);
         setDocuments(docs);
       } catch (error) {
         setOpenAlert({
@@ -42,7 +49,7 @@ const ListInscriptionDocuments = () => {
       }
     };
     fetchDocuments();
-  }, []);
+  }, [recordId]);
 
   const handleUpdateClick = (doc: IInscriptionDocument) => {
     setSelectedDocument(doc);
@@ -60,7 +67,7 @@ const ListInscriptionDocuments = () => {
   const handleUpdateSuccess = () => {
     setShowUpdateModal(false);
     setLoading(true);
-    getAllInscriptionDocuments()
+    getInscriptionDocumentsByRecordId(recordId || '')
       .then(setDocuments)
       .finally(() => setLoading(false));
   };
@@ -68,7 +75,7 @@ const ListInscriptionDocuments = () => {
   const handleRefresh = async () => {
     setLoading(true);
     try {
-      const docs = await getAllInscriptionDocuments();
+      const docs = await getInscriptionDocumentsByRecordId(recordId || '');
       setDocuments(docs);
       setOpenAlert({
         open: true,
@@ -88,8 +95,8 @@ const ListInscriptionDocuments = () => {
   };
 
   const handleEditAll = () => {
-    if (documents.length > 0) {
-      handleUpdateClick(documents[0]);
+    if (documents) {
+      handleUpdateClick(documents);
     }
   };
 
@@ -128,6 +135,8 @@ const ListInscriptionDocuments = () => {
     setShowPreviewModal(true);
   };
 
+  if (!recordId) return <Typography variant="h6">No se encontró el expediente del estudiante.</Typography>;
+
   if (loading) return <Loader />;
 
   return (
@@ -149,7 +158,7 @@ const ListInscriptionDocuments = () => {
             variant="outlined"
             startIcon={<EditIcon />}
             onClick={handleEditAll}
-            disabled={documents.length === 0}
+            disabled={!documents}
           >
             Editar
           </Button>
@@ -164,7 +173,7 @@ const ListInscriptionDocuments = () => {
       </Box>
 
       <VerticalTable<IInscriptionDocument>
-        data={documents}
+        data={documents ? [documents] : []}
         columns={[
           { key: "registrationDoc", label: "Documento de Registro" },
           { key: "semesterGradeChartDoc", label: "Documento de Notas" },
@@ -212,7 +221,7 @@ const ListInscriptionDocuments = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <GradeModal inscriptionId={documents.id}/>
+          <GradeModal inscriptionId={documents ? documents.id : ''}/>
         </DialogContent>
       </Dialog>
     </>

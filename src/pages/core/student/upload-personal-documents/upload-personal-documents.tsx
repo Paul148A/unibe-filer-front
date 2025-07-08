@@ -45,7 +45,7 @@ const UploadPersonalDocuments: React.FC = () => {
   const [votingBallotDoc, setVotingBallotDoc] = useState<File | null>(null);
   const [notarizDegreeDoc, setNotarizDegreeDoc] = useState<File | null>(null);
   const [message] = useState('');
-  const { setOpenAlert } = useAuth();
+  const { setOpenAlert, record } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +68,7 @@ const UploadPersonalDocuments: React.FC = () => {
       });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
       setTimeout(() => {
-        navigate('/list-personal-documents');
+        navigate(`/list-personal-documents/${record?.id}`);
       }, 1500);
     } catch (error: any) {
       setOpenAlert({ open: true, type: "error", title: "" + error });
@@ -84,7 +84,7 @@ const UploadPersonalDocuments: React.FC = () => {
         <Button
           variant="outlined"
           startIcon={<ListAltIcon />}
-          onClick={() => navigate('/list-personal-documents')}
+          onClick={() => navigate(`/list-personal-documents/${record?.id}`)}
         >
           Ver Lista de Documentos
         </Button>

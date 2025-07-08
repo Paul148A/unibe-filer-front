@@ -52,7 +52,7 @@ const UploadInscriptionDocuments: React.FC = () => {
   const [approvalDoc, setApprovalDoc] = useState<File | null>(null);
   const [message] = useState('');
   const navigate = useNavigate();
-  const { setOpenAlert } = useAuth();
+  const { setOpenAlert, record } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,7 +77,7 @@ const UploadInscriptionDocuments: React.FC = () => {
       });
       setOpenAlert({open: true, type: "success", title: "" + response.data.message});
       setTimeout(() => {
-        navigate('/list-inscription-documents');
+        navigate(`/list-inscription-documents/${record?.id}`);
       }, 1500);
     } catch (error) {
       setOpenAlert({ open: true, type: "error", title: "" + error });
@@ -93,7 +93,7 @@ const UploadInscriptionDocuments: React.FC = () => {
         <Button
           variant="outlined"
           startIcon={<ListAltIcon />}
-          onClick={() => navigate('/list-inscription-documents')}
+          onClick={() => navigate(`/list-inscription-documents/${record?.id}`)}
         >
           Ver Lista de Documentos
         </Button>

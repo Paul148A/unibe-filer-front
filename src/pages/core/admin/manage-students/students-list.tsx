@@ -5,11 +5,14 @@ import { useAuth } from "../../../../components/Context/context";
 import CustomTable from "../../../../components/CustomTable/custom-table";
 import Loader from "../../../../components/Loader/loader";
 import { Typography } from "@mui/material";
+import StudentsUpdate from './students-update';
 
 const StudentsList = () => {
   const [users, setUsers] = useState<IUser[]>([]);
   const [loading, setLoading] = useState(true);
   const { setOpenAlert } = useAuth();
+  const [selectedUser, setSelectedUser] = useState<IUser | null>(null);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -31,6 +34,14 @@ const StudentsList = () => {
   }, []);
 
   if (loading) return <Loader />;
+
+  const handleAction = (action: string, user: IUser) => {
+    if (action === 'EditarUsuario') {
+      setSelectedUser(user);
+      setShowUpdateModal(true);
+    }
+    // Puedes agregar aquí otras acciones como EliminarUsuario, VisualizarPdf, etc.
+  };
 
   return (
     <>
@@ -57,7 +68,23 @@ const StudentsList = () => {
           },
         ]}
         actionKeys={["EditarUsuario", "EliminarUsuario", "VisualizarPdf"]}
+        onEditClick={(user) => {
+          setSelectedUser(user);
+          setShowUpdateModal(true);
+        }}
       />
+      {showUpdateModal && selectedUser && (
+        <StudentsUpdate
+          open={showUpdateModal}
+          onClose={() => setShowUpdateModal(false)}
+          user={selectedUser}
+          onUpdate={() => {
+            setShowUpdateModal(false);
+            setLoading(true);
+            getAllUsers().then(setUsers).finally(() => setLoading(false));
+          }}
+        />
+      )}
     </>
   );
 };

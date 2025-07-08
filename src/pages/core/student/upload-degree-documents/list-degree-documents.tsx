@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { IDegreeDocument } from "../../../../interfaces/IDegreeDocument";
-import { getAllDegreeDocuments } from "../../../../services/upload-files/degree-documents.service";
+import { getDegreeDocumentsByRecordId } from "../../../../services/upload-files/degree-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import VerticalTable from "../../../../components/CustomVerticalTable/vertical-table";
 import Loader from "../../../../components/Loader/loader";
@@ -9,9 +9,11 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import UpdateDegreeDocumentsModal from "./update-degree-documents";
 import FilePreviewModal from "../../../../components/Modals/FilePreviewModal/file-preview-modal";
+import { useParams } from "react-router-dom";
 
 const ListDegreeDocuments = () => {
-  const [documents, setDocuments] = useState<IDegreeDocument[]>([]);
+  const { recordId } = useParams<{ recordId: string }>();
+  const [documents, setDocuments] = useState<IDegreeDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IDegreeDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -20,9 +22,14 @@ const ListDegreeDocuments = () => {
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
+    if (!recordId) {
+      setLoading(false);
+      setDocuments(null);
+      return;
+    }
     const fetchDocuments = async () => {
       try {
-        const docs = await getAllDegreeDocuments();
+        const docs = await getDegreeDocumentsByRecordId(recordId);
         setDocuments(docs);
       } catch (error) {
         setOpenAlert({
@@ -36,7 +43,7 @@ const ListDegreeDocuments = () => {
       }
     };
     fetchDocuments();
-  }, []);
+  }, [recordId]);
 
   const handleUpdateClick = (doc: IDegreeDocument) => {
     setSelectedDocument(doc);
@@ -46,7 +53,7 @@ const ListDegreeDocuments = () => {
   const handleUpdateSuccess = () => {
     setShowUpdateModal(false);
     setLoading(true);
-    getAllDegreeDocuments()
+    getDegreeDocumentsByRecordId(recordId || '')
       .then(setDocuments)
       .finally(() => setLoading(false));
   };
@@ -54,7 +61,7 @@ const ListDegreeDocuments = () => {
   const handleRefresh = async () => {
     setLoading(true);
     try {
-      const docs = await getAllDegreeDocuments();
+      const docs = await getDegreeDocumentsByRecordId(recordId || '');
       setDocuments(docs);
       setOpenAlert({
         open: true,
@@ -74,8 +81,8 @@ const ListDegreeDocuments = () => {
   };
 
   const handleEditAll = () => {
-    if (documents.length > 0) {
-      handleUpdateClick(documents[0]);
+    if (documents) {
+      handleUpdateClick(documents);
     }
   };
 
@@ -116,6 +123,7 @@ const ListDegreeDocuments = () => {
     setShowPreviewModal(true);
   };
 
+  if (!recordId) return <Typography variant="h6">No se encontró el expediente del estudiante.</Typography>;
   if (loading) return <Loader />;
 
   return (
@@ -129,7 +137,7 @@ const ListDegreeDocuments = () => {
             variant="outlined"
             startIcon={<EditIcon />}
             onClick={handleEditAll}
-            disabled={documents.length === 0}
+            disabled={!documents}
           >
             Editar
           </Button>
@@ -144,7 +152,7 @@ const ListDegreeDocuments = () => {
       </Box>
       
       <VerticalTable<IDegreeDocument>
-        data={documents}
+        data={documents ? [documents] : []}
         columns={[
           { key: "topicComplainDoc", label: "Solicitud de Tema" },
           { key: "topicApprovalDoc", label: "Aprobación de Tema" },

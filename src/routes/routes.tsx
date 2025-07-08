@@ -53,11 +53,11 @@ const AppRouter = () => {
             
             {/* Rutas documentos de grado */}
             <Route path="/upload-degree-documents" element={<UploadDegreeDocuments />} />
-            <Route path="/list-degree-documents" element={<ListDegreeDocuments />} />
+            <Route path="/list-degree-documents/:recordId" element={<ListDegreeDocuments />} />
             
             {/* Rutas documentos personales */}
             <Route path="/upload-personal-documents" element={<UploadPersonalDocuments />} />
-            <Route path="/list-personal-documents" element={<ListPersonalDocuments />} />
+            <Route path="/list-personal-documents/:recordId" element={<ListPersonalDocuments />} />
           </Route>
 
         {/* Language */}

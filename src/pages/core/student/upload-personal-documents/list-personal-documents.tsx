@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { IPersonalDocument } from "../../../../interfaces/IPersonalDocument";
-import { getAllPersonalDocuments } from "../../../../services/upload-files/personal-documents.service";
+import { getPersonalDocumentsByRecordId } from "../../../../services/upload-files/personal-documents.service";
 import { useAuth } from "../../../../components/Context/context";
 import VerticalTable from "../../../../components/CustomVerticalTable/vertical-table";
 import Loader from "../../../../components/Loader/loader";
@@ -9,9 +9,11 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import EditIcon from '@mui/icons-material/Edit';
 import UpdatePersonalDocumentsModal from "./update-personal-documents";
 import FilePreviewModal from "../../../../components/Modals/FilePreviewModal/file-preview-modal";
+import { useParams } from "react-router-dom";
 
 const ListPersonalDocuments = () => {
-  const [documents, setDocuments] = useState<IPersonalDocument[]>([]);
+  const { recordId } = useParams<{ recordId: string }>();
+  const [documents, setDocuments] = useState<IPersonalDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IPersonalDocument | null>(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
@@ -20,9 +22,14 @@ const ListPersonalDocuments = () => {
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
+    if (!recordId) {
+      setLoading(false);
+      setDocuments(null);
+      return;
+    }
     const fetchDocuments = async () => {
       try {
-        const docs = await getAllPersonalDocuments();
+        const docs = await getPersonalDocumentsByRecordId(recordId);
         setDocuments(docs);
       } catch (error) {
         setOpenAlert({
@@ -36,7 +43,7 @@ const ListPersonalDocuments = () => {
       }
     };
     fetchDocuments();
-  }, []);
+  }, [recordId]);
 
   const handleUpdateClick = (doc: IPersonalDocument) => {
     setSelectedDocument(doc);
@@ -46,7 +53,7 @@ const ListPersonalDocuments = () => {
   const handleUpdateSuccess = () => {
     setShowUpdateModal(false);
     setLoading(true);
-    getAllPersonalDocuments()
+    getPersonalDocumentsByRecordId(recordId || '')
       .then(setDocuments)
       .finally(() => setLoading(false));
   };
@@ -54,7 +61,7 @@ const ListPersonalDocuments = () => {
   const handleRefresh = async () => {
     setLoading(true);
     try {
-      const docs = await getAllPersonalDocuments();
+      const docs = await getPersonalDocumentsByRecordId(recordId || '');
       setDocuments(docs);
       setOpenAlert({
         open: true,
@@ -74,8 +81,8 @@ const ListPersonalDocuments = () => {
   };
 
   const handleEditAll = () => {
-    if (documents.length > 0) {
-      handleUpdateClick(documents[0]);
+    if (documents) {
+      handleUpdateClick(documents);
     }
   };
 
@@ -112,6 +119,7 @@ const ListPersonalDocuments = () => {
     setShowPreviewModal(true);
   };
 
+  if (!recordId) return <Typography variant="h6">No se encontró el expediente del estudiante.</Typography>;
   if (loading) return <Loader />;
 
   return (
@@ -125,7 +133,7 @@ const ListPersonalDocuments = () => {
             variant="outlined"
             startIcon={<EditIcon />}
             onClick={handleEditAll}
-            disabled={documents.length === 0}
+            disabled={!documents}
           >
             Editar
           </Button>
@@ -140,7 +148,7 @@ const ListPersonalDocuments = () => {
       </Box>
 
       <VerticalTable<IPersonalDocument>
-        data={documents}
+        data={documents ? [documents] : []}
         columns={[
           { key: "pictureDoc", label: "Foto Carnet" },
           { key: "dniDoc", label: "Cédula de Identidad" },

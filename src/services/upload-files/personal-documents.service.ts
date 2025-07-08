@@ -21,10 +21,10 @@ export const deletePersonalDocument = async (id: string): Promise<void> => {
   await axiosInstance.delete(`${ENDPOINT}/delete-personal-documents/${id}`);
 };
 
-export const getPersonalDocumentsByRecordId = async (recordId: string): Promise<IPersonalDocument[]> => {
-  const response = await axiosInstance.get<GetPersonalDocumentsResponse>(`${ENDPOINT}/record/${recordId}`);
+export const getPersonalDocumentsByRecordId = async (recordId: string): Promise<IPersonalDocument> => {
+  const response = await axiosInstance.get<{ message: string, data: IPersonalDocument }>(`${ENDPOINT}/record/${recordId}`);
   return response.data.data;
-}
+};
 
 export const updatePersonalDocuments = async (
   id: string, 

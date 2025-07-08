@@ -45,7 +45,7 @@ export function useCustomTable<T>(
       return (
         <Stack direction="row" spacing={1}>
           {actions.includes('EditarUsuario') && (
-            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => console.log('Editar', row)}>
+            <Button size="small" sx={{backgroundColor: 'blue'}} onClick={() => onEditClick && onEditClick(row)}>
               <EditIcon sx={{color: 'white'}} />
             </Button>
           )}
