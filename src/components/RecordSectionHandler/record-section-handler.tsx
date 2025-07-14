@@ -10,8 +10,9 @@ import CloseIcon from '@mui/icons-material/Close';
 interface Props {
   sectionType?: string;
   docs: IPersonalDocument | IInscriptionDocument | IDegreeDocument;
-  open: boolean; // Nuevo prop para controlar el modal
+  open: boolean;
   onClose: () => void;
+  onDataChanged?: () => void;
 }
 
 const RecordSectionHandler = (props: Props) => {
@@ -20,15 +21,15 @@ const RecordSectionHandler = (props: Props) => {
   switch (props.sectionType) {
     case "degree":
       { const degreeDocs = props.docs as IDegreeDocument;
-      content = <DegreeDocsTable degreeDocs={degreeDocs}/>;
+      content = <DegreeDocsTable degreeDocs={degreeDocs} onClose={props.onClose} onDataChanged={props.onDataChanged}/>;
       break; }
     case "inscription":
       { const inscriptionDocs = props.docs as IInscriptionDocument;
-      content = <InscriptionDocsTable inscriptionDocs={inscriptionDocs}/>;
+      content = <InscriptionDocsTable inscriptionDocs={inscriptionDocs} onClose={props.onClose} onDataChanged={props.onDataChanged}/>;
       break;}
     case "personal":
       { const personalDocs = props.docs as IPersonalDocument;
-      content = <PersonalDocsTable personalDocs={personalDocs}/>;
+      content = <PersonalDocsTable personalDocs={personalDocs} onClose={props.onClose} onDataChanged={props.onDataChanged}/>;
       break;}
     default:
       content = <div>Tipo de sección no válido</div>;

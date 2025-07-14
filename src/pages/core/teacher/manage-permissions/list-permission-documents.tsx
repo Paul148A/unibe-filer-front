@@ -17,6 +17,8 @@ const columns: Column<IPermissionDocument & { student: string; recordCode: strin
   { key: 'student', label: 'Estudiante' },
   { key: 'recordCode', label: 'Record' },
   { key: 'supportingDoc', label: 'Nombre del Archivo', render: (value, row) => value ? value : 'Sin archivo' },
+  { key: 'createdAt', label: 'Fecha y hora de creación de usuario', render: (value) => value ? new Date(value).toLocaleString('es-EC', { dateStyle: 'medium', timeStyle: 'short' }) : '-' },
+  { key: 'updatedAt', label: 'Fecha y hora de subida', render: (value) => value ? new Date(value).toLocaleString('es-EC', { dateStyle: 'medium', timeStyle: 'short' }) : '-' },
 ];
 
 const actionKeys: ActionKey[] = [

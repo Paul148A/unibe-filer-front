@@ -3,7 +3,6 @@ import {
   TextField,
   Button,
   MenuItem,
-  Typography,
   Box,
   InputAdornment,
   IconButton,
@@ -11,7 +10,8 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
+  Typography
 } from '@mui/material';
 import {
   Person as PersonIcon,
@@ -21,7 +21,7 @@ import {
   Visibility,
   VisibilityOff
 } from '@mui/icons-material';
-import axios from 'axios';
+import axiosInstance from '../../../../api/axios';
 import { useAuth } from '../../../../components/Context/context';
 import { IUser } from '../../../../interfaces/IUser';
 
@@ -52,9 +52,14 @@ const StudentsUpdate: React.FC<StudentsUpdateProps> = ({ open, onClose, user, on
     password: '',
     role_id: '',
     status_id: '',
+    semester_id: '',
+    career_id: '',
+    is_approved: false,
   });
   const [roles, setRoles] = useState<Role[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [semesters, setSemesters] = useState<any[]>([]);
+  const [careers, setCareers] = useState<any[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { setOpenAlert } = useAuth();
@@ -69,6 +74,9 @@ const StudentsUpdate: React.FC<StudentsUpdateProps> = ({ open, onClose, user, on
         password: '',
         role_id: user.role?.id || '',
         status_id: user.status?.id || '',
+        semester_id: user.semester?.id || '',
+        career_id: user.career?.id || '',
+        is_approved: user.is_approved || false,
       });
     }
   }, [user]);
@@ -77,12 +85,16 @@ const StudentsUpdate: React.FC<StudentsUpdateProps> = ({ open, onClose, user, on
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [rolesRes, statusesRes] = await Promise.all([
-          axios.get('http://localhost:3000/api1/roles'),
-          axios.get('http://localhost:3000/api1/status'),
+        const [rolesRes, statusesRes, semestersRes, careersRes] = await Promise.all([
+          axiosInstance.get('/api1/roles'),
+          axiosInstance.get('/api1/status'),
+          axiosInstance.get('/api1/semesters'),
+          axiosInstance.get('/api1/careers'),
         ]);
         setRoles(rolesRes.data?.data ?? []);
         setStatuses(statusesRes.data?.data ?? []);
+        setSemesters(semestersRes.data?.data ?? []);
+        setCareers(careersRes.data?.data ?? []);
       } catch (error: any) {
         setOpenAlert({ open: true, type: "error", title: "Error al cargar los datos: " + error.message });
       } finally {
@@ -92,11 +104,11 @@ const StudentsUpdate: React.FC<StudentsUpdateProps> = ({ open, onClose, user, on
     fetchData();
   }, [setOpenAlert]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value, type, checked } = e.target as any;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -116,11 +128,14 @@ const StudentsUpdate: React.FC<StudentsUpdateProps> = ({ open, onClose, user, on
         email: formData.email,
         role: formData.role_id,
         status: formData.status_id,
+        semester: formData.semester_id,
+        career: formData.career_id,
+        is_approved: formData.is_approved,
       };
       if (formData.password) {
         userData.password = formData.password;
       }
-      await axios.put(`http://localhost:3000/api1/users/${user.id}`, userData);
+      await axiosInstance.put(`/api1/users/${user.id}`, userData);
       setOpenAlert({ open: true, type: "success", title: "Usuario actualizado con éxito" });
       onUpdate();
       onClose();
@@ -259,6 +274,46 @@ const StudentsUpdate: React.FC<StudentsUpdateProps> = ({ open, onClose, user, on
                 </MenuItem>
               ))}
             </TextField>
+            <TextField
+              select
+              fullWidth
+              label="Semestre"
+              name="semester_id"
+              value={formData.semester_id}
+              onChange={handleChange}
+              variant="outlined"
+            >
+              {semesters.map((semester) => (
+                <MenuItem key={semester.id} value={semester.id}>
+                  {semester.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <TextField
+              select
+              fullWidth
+              label="Carrera"
+              name="career_id"
+              value={formData.career_id}
+              onChange={handleChange}
+              variant="outlined"
+            >
+              {careers.map((career) => (
+                <MenuItem key={career.id} value={career.id}>
+                  {career.name}
+                </MenuItem>
+              ))}
+            </TextField>
+            <Box display="flex" alignItems="center">
+              <input
+                type="checkbox"
+                name="is_approved"
+                checked={formData.is_approved}
+                onChange={handleChange}
+                style={{ marginRight: 8 }}
+              />
+              <Typography>¿El estudiante esta homologado?</Typography>
+            </Box>
           </Stack>
         </Box>
       </DialogContent>

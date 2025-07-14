@@ -5,10 +5,10 @@ import { IPersonalDocument } from "../../interfaces/IPersonalDocument";
 import DownloadIcon from '@mui/icons-material/Download';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { downloadInscriptionDocument, updateInscriptionDocumentStatus } from "../../services/upload-files/inscription-documents.service";
-import { useState } from "react";
+import { downloadInscriptionDocument, getDocumentStatuses, updateInscriptionDocumentStatus } from "../../services/upload-files/inscription-documents.service";
+import { useState, useEffect } from "react";
 import FilePreviewModal from "../Modals/FilePreviewModal/file-preview-modal";
-import { IGlobal } from "../../global/IGlobal";
+import ConfirmDialog from '../Global/ConfirmDialog';
 
 interface Props {
   sectionType?: string;
@@ -24,6 +24,14 @@ const CertificateSectionHandler = (props: Props) => {
   const [status, setStatus] = useState<'approved' | 'rejected' | 'pending'>(props.status || 'pending');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
+  const [statusOptions, setStatusOptions] = useState<{ id: string, name: string }[]>([]);
+  const [docsState, setDocsState] = useState(props.docs as IInscriptionDocument);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
+
+  useEffect(() => {
+    getDocumentStatuses().then(setStatusOptions);
+  }, []);
 
   const handleDownload = async () => {
     try {
@@ -34,9 +42,7 @@ const CertificateSectionHandler = (props: Props) => {
   };
 
   const handlePreviewClick = () => {
-    // Obtener el nombre del archivo del certificado de inglés desde el documento de inscripción
-    const inscriptionDocs = props.docs as IInscriptionDocument;
-    const fileName = inscriptionDocs.englishCertificateDoc;
+    const fileName = docsState.englishCertificateDoc;
     
     if (fileName && fileName.trim() !== '') {
       setPreviewFile({
@@ -49,44 +55,68 @@ const CertificateSectionHandler = (props: Props) => {
     }
   };
 
-  const handleStatusChange = async (newStatus: 'approved' | 'rejected' | 'pending') => {
+  const handleStatusChange = async (statusId: string) => {
     try {
-      await updateInscriptionDocumentStatus(props.documentId, newStatus);
-      setStatus(newStatus);
-      if (props.onStatusChange) {
-        props.onStatusChange(newStatus);
+      const statusObj = statusOptions.find(s => s.id === statusId);
+      const statusName = statusObj?.name?.toLowerCase();
+      let mappedStatus: 'approved' | 'rejected' | 'pending' = 'pending';
+      if (statusName?.includes('aprobado')) mappedStatus = 'approved';
+      else if (statusName?.includes('rechazado')) mappedStatus = 'rejected';
+      else if (statusName?.includes('revision') || statusName?.includes('revisión')) mappedStatus = 'pending';
+      else mappedStatus = 'pending';
+      if (mappedStatus === 'rejected') {
+        setPendingStatusId(statusId);
+        setOpenConfirmDialog(true);
+        return;
       }
+      await updateInscriptionDocumentStatus(props.documentId, 'englishCertificateDocStatus', statusId);
+      setDocsState({
+        ...docsState,
+        englishCertificateDocStatus: statusObj
+      });
       setOpenDialog(false);
     } catch (error) {
       console.error('Error al actualizar el estado:', error);
     }
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'success';
-      case 'rejected':
-        return 'error';
-      default:
-        return 'warning';
+  const handleConfirmReject = async () => {
+    if (!pendingStatusId) return;
+    try {
+      const statusObj = statusOptions.find(s => s.id === pendingStatusId);
+      await updateInscriptionDocumentStatus(props.documentId, 'englishCertificateDocStatus', pendingStatusId);
+      setDocsState({
+        ...docsState,
+        englishCertificateDocStatus: statusObj
+      });
+      setOpenDialog(false);
+    } catch (error) {
+      console.error('Error al actualizar el estado:', error);
     }
+    setOpenConfirmDialog(false);
+    setPendingStatusId(null);
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'Aprobado';
-      case 'rejected':
-        return 'Rechazado';
-      default:
-        return 'Pendiente';
-    }
+  const handleCancelReject = () => {
+    setOpenConfirmDialog(false);
+    setPendingStatusId(null);
   };
 
-  // Verificar si hay un archivo de certificado disponible
-  const inscriptionDocs = props.docs as IInscriptionDocument;
-  const hasCertificateFile = inscriptionDocs.englishCertificateDoc && inscriptionDocs.englishCertificateDoc.trim() !== '';
+  const getStatusColor = (name: string) => {
+    if (!name) return 'warning';
+    if (name.toLowerCase().includes('aprobado')) return 'success';
+    if (name.toLowerCase().includes('rechazado')) return 'error';
+    if (name.toLowerCase().includes('revision') || name.toLowerCase().includes('revisión')) return 'warning';
+    return 'warning';
+  };
+
+  const getStatusText = (name: string) => {
+    if (!name) return 'En revisión';
+    return name;
+  };
+
+  const hasCertificateFile = docsState.englishCertificateDoc && docsState.englishCertificateDoc.trim() !== '';
+  const statusObj = docsState.englishCertificateDocStatus;
 
   return (
     <>
@@ -114,9 +144,9 @@ const CertificateSectionHandler = (props: Props) => {
           variant="outlined"
           startIcon={<EditIcon />}
           onClick={() => setOpenDialog(true)}
-          color={getStatusColor(status)}
+          color={getStatusColor(statusObj?.name || '')}
         >
-          Estado: {getStatusText(status)}
+          Estado: {getStatusText(statusObj?.name || '')}
         </Button>
 
         <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
@@ -125,17 +155,25 @@ const CertificateSectionHandler = (props: Props) => {
             <FormControl fullWidth sx={{ mt: 2 }}>
               <InputLabel>Estado</InputLabel>
               <Select
-                value={status}
+                value={statusObj && statusObj.id ? statusObj.id : ''}
                 label="Estado"
-                onChange={(e) => handleStatusChange(e.target.value as 'approved' | 'rejected' | 'pending')}
+                onChange={(e) => handleStatusChange(e.target.value as string)}
               >
-                <MenuItem value="approved">Aprobado</MenuItem>
-                <MenuItem value="rejected">Rechazado</MenuItem>
-                <MenuItem value="pending">Pendiente</MenuItem>
+                {statusOptions.filter(option => !option.name.toLowerCase().includes('revisión') && !option.name.toLowerCase().includes('revision')).map(option => (
+                  <MenuItem key={option.id} value={option.id}>{option.name}</MenuItem>
+                ))}
               </Select>
             </FormControl>
           </DialogContent>
         </Dialog>
+
+        <ConfirmDialog
+          open={openConfirmDialog}
+          title="Confirmar rechazo"
+          message="¿Estás seguro de que deseas rechazar este documento? Esta acción eliminará el archivo asociado de inmediato y notificara al estudiante para corregir el documento."
+          onCancel={handleCancelReject}
+          onConfirm={handleConfirmReject}
+        />
       </Box>
 
       {showPreviewModal && previewFile && (

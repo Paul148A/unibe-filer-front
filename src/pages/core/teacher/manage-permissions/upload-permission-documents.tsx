@@ -13,6 +13,7 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import { PermissionDocumentsService } from '../../../../services/upload-files/permission-documents.service';
+import { RecordsService, IRecord } from '../../../../services/core/records.service';
 import RecordSelector from '../../../../components/RecordSelector/record-selector';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
@@ -39,8 +40,22 @@ const VisuallyHiddenInput = styled('input')({
 const UploadPermissionDocuments: React.FC = () => {
   const [supportingDoc, setSupportingDoc] = useState<File | null>(null);
   const [recordId, setRecordId] = useState<string>('');
+  const [records, setRecords] = useState<IRecord[]>([]);
   const { setOpenAlert } = useAuth();
   const navigate = useNavigate();
+
+  // Cargar records al montar el componente
+  React.useEffect(() => {
+    const fetchRecords = async () => {
+      try {
+        const response = await RecordsService.getAllRecords();
+        setRecords(response.data || []);
+      } catch (error) {
+        setRecords([]);
+      }
+    };
+    fetchRecords();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,8 +65,10 @@ const UploadPermissionDocuments: React.FC = () => {
       return;
     }
 
-    if (!recordId.trim()) {
-      setOpenAlert({ open: true, type: "error", title: "Debes seleccionar un estudiante" });
+    // Validar que el recordId exista en la lista de records
+    const recordExists = records.some(r => r.id === recordId);
+    if (!recordId.trim() || !recordExists) {
+      setOpenAlert({ open: true, type: "error", title: "Debes seleccionar un estudiante válido de la lista" });
       return;
     }
 
