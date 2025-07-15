@@ -5,7 +5,7 @@ import FilePreviewModal from '../../Modals/FilePreviewModal/file-preview-modal';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { Menu, MenuItem } from '@mui/material';
-import { getDocumentStatuses, updateDegreeStatus, getDegreeDocumentsByRecordId, deleteDegreeDocumentFile } from '../../../services/upload-files/degree-documents.service';
+import { getDocumentStatuses, updateDegreeStatus, getDegreeDocumentsByRecordId } from '../../../services/upload-files/degree-documents.service';
 import { useEffect } from 'react';
 import ConfirmDialog from '../../Global/ConfirmDialog';
 
@@ -94,10 +94,9 @@ const DegreeDocumentsTable: React.FC<Props> = ({ degreeDocs, onClose, onDataChan
     setLoading(true);
     try {
       const statusObj = statusOptions.find(s => s.id === pendingStatusId);
-      await deleteDegreeDocumentFile(docsState.id, selectedDocKey);
+      await updateDegreeStatus(docsState.id, `${selectedDocKey}Status`, pendingStatusId);
       setDocsState({
         ...docsState,
-        [selectedDocKey]: undefined,
         [`${selectedDocKey}Status`]: statusObj
       });
     } catch (e) {

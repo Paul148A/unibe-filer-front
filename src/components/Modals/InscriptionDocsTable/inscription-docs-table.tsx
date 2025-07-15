@@ -5,7 +5,7 @@ import FilePreviewModal from '../../Modals/FilePreviewModal/file-preview-modal';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import { Menu, MenuItem } from '@mui/material';
-import { getDocumentStatuses, updateInscriptionDocumentStatus, getInscriptionDocumentsByRecordId, deleteInscriptionDocumentFile } from '../../../services/upload-files/inscription-documents.service';
+import { getDocumentStatuses, updateInscriptionDocumentStatus, getInscriptionDocumentsByRecordId } from '../../../services/upload-files/inscription-documents.service';
 import { useEffect } from 'react';
 import ConfirmDialog from '../../Global/ConfirmDialog';
 
@@ -91,10 +91,9 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
     setLoading(true);
     try {
       const statusObj = statusOptions.find(s => s.id === pendingStatusId);
-      await deleteInscriptionDocumentFile(docsState.id, selectedDocKey);
+      await updateInscriptionDocumentStatus(docsState.id, `${selectedDocKey}Status`, pendingStatusId);
       setDocsState({
         ...docsState,
-        [selectedDocKey]: undefined,
         [`${selectedDocKey}Status`]: statusObj
       });
     } catch (e) {

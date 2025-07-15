@@ -91,10 +91,11 @@ const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs, onClose, onData
     setLoading(true);
     try {
       const statusObj = statusOptions.find(s => s.id === pendingStatusId);
-      await deletePersonalDocumentFile(docsState.id, selectedDocKey);
+      const formData = new FormData();
+      formData.append(`${selectedDocKey}Status`, pendingStatusId);
+      await updatePersonalDocuments(docsState.id, formData);
       setDocsState({
         ...docsState,
-        [selectedDocKey]: undefined,
         [`${selectedDocKey}Status`]: statusObj
       });
     } catch (e) {
