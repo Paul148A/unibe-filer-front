@@ -18,7 +18,7 @@ const CertificatePage = () => {
         if (inscriptionDocs) {
             setInscriptionDocs({
                 ...inscriptionDocs,
-                englishCertificateStatus: newStatus
+                englishCertificateDocStatus: { id: newStatus, name: newStatus }
             });
         }
     };
@@ -86,14 +86,13 @@ const CertificatePage = () => {
                             {inscriptionDocs?.englishCertificateDoc && (
                                 <CertificateSection
                                     docs={{
-                                        id: inscriptionDocs.id,
-                                        englishCertificateDoc: inscriptionDocs.englishCertificateDoc,
-                                        registrationDoc: "",
-                                        semesterGradeChartDoc: "",
-                                        reEntryDoc: "",
-                                        enrollmentCertificateDoc: "",
-                                        approvalDoc: "",
-                                        englishCertificateStatus: inscriptionDocs.englishCertificateStatus
+                                        ...inscriptionDocs,
+                                        registrationDoc: inscriptionDocs.registrationDoc || "",
+                                        semesterGradeChartDoc: inscriptionDocs.semesterGradeChartDoc || "",
+                                        reEntryDoc: inscriptionDocs.reEntryDoc || "",
+                                        enrollmentCertificateDoc: inscriptionDocs.enrollmentCertificateDoc || "",
+                                        approvalDoc: inscriptionDocs.approvalDoc || "",
+                                        englishCertificateDocStatus: inscriptionDocs.englishCertificateDocStatus
                                     }}
                                     img='/downloaddocuments.png'
                                     title={`Certificado de inglés de: ${record?.user?.names} ${record?.user?.last_names}`}
@@ -101,7 +100,13 @@ const CertificatePage = () => {
                                     sectionType='inscription'
                                     documentId={inscriptionDocs.id}
                                     documentType='english_certificate'
-                                    status={inscriptionDocs.englishCertificateStatus}
+                                    status={
+                                        inscriptionDocs.englishCertificateDocStatus?.id === 'approved' ||
+                                        inscriptionDocs.englishCertificateDocStatus?.id === 'rejected' ||
+                                        inscriptionDocs.englishCertificateDocStatus?.id === 'pending'
+                                            ? inscriptionDocs.englishCertificateDocStatus.id as 'approved' | 'rejected' | 'pending'
+                                            : undefined
+                                    }
                                     onStatusChange={handleStatusChange}
                                 />
                             )}

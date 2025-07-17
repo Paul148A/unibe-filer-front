@@ -1,22 +1,48 @@
-import React, { useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Menu, MenuItem } from '@mui/material';
 import { IPersonalDocument } from '../../../interfaces/IPersonalDocument';
 import FilePreviewModal from '../../Modals/FilePreviewModal/file-preview-modal';
+import { getDocumentStatuses, updatePersonalDocuments, getPersonalDocumentsByRecordId, deletePersonalDocumentFile } from '../../../services/upload-files/personal-documents.service';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import { Chip } from '@mui/material';
+import ConfirmDialog from '../../Global/ConfirmDialog';
 
 interface Props {
   personalDocs: IPersonalDocument;
+  onClose?: () => void;
+  onDataChanged?: () => void;
 }
 
 const documentTypes = [
-  { key: 'pictureDoc', label: 'Foto de tamaño carnet' },
-  { key: 'dniDoc', label: 'Copia de cedula' },
-  { key: 'votingBallotDoc', label: 'Papeleta de votación' },
-  { key: 'notarizDegreeDoc', label: 'Documento de título notarizado' },
+  { key: 'pictureDoc', label: 'Foto de tamaño carnet', statusKey: 'pictureDocStatus' },
+  { key: 'dniDoc', label: 'Copia de cedula', statusKey: 'dniDocStatus' },
+  { key: 'votingBallotDoc', label: 'Papeleta de votación', statusKey: 'votingBallotDocStatus' },
+  { key: 'notarizDegreeDoc', label: 'Documento de título notarizado', statusKey: 'notarizDegreeDocStatus' },
 ];
 
-const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs }) => {
+const getStatusColor = (name: string) => {
+  if (!name) return 'default';
+  if (name.toLowerCase().includes('aprobado')) return 'success';
+  if (name.toLowerCase().includes('rechazado')) return 'error';
+  if (name.toLowerCase().includes('revision') || name.toLowerCase().includes('revisión')) return 'warning';
+  return 'default';
+};
+
+const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs, onClose, onDataChanged }) => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedDocKey, setSelectedDocKey] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [docsState, setDocsState] = useState(personalDocs);
+  const [statusOptions, setStatusOptions] = useState<{ id: string, name: string }[]>([]);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
+
+  useEffect(() => {
+    getDocumentStatuses().then(setStatusOptions);
+  }, []);
 
   const handlePreviewClick = (fieldKey: string, fieldName: string, fieldValue: string) => {
     setPreviewFile({
@@ -26,9 +52,87 @@ const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs }) => {
     setShowPreviewModal(true);
   };
 
+  const handleStatusClick = (event: React.MouseEvent<HTMLButtonElement>, docKey: string) => {
+    setAnchorEl(event.currentTarget);
+    setSelectedDocKey(docKey);
+  };
+
+  const handleStatusClose = () => {
+    setAnchorEl(null);
+    setSelectedDocKey(null);
+  };
+
+  const handleStatusChange = async (statusId: string) => {
+    if (!selectedDocKey) return;
+    const statusObj = statusOptions.find(s => s.id === statusId);
+    if (statusObj && statusObj.name.toLowerCase().includes('rechazado')) {
+      setPendingStatusId(statusId);
+      setOpenConfirmDialog(true);
+      return;
+    }
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append(`${selectedDocKey}Status`, statusId);
+      await updatePersonalDocuments(docsState.id, formData);
+      setDocsState({
+        ...docsState,
+        [`${selectedDocKey}Status`]: statusObj
+      });
+    } catch (e) {
+      alert('Error al actualizar el estado');
+    }
+    setLoading(false);
+    handleStatusClose();
+  };
+
+  const handleConfirmReject = async () => {
+    if (!selectedDocKey || !pendingStatusId) return;
+    setLoading(true);
+    try {
+      const statusObj = statusOptions.find(s => s.id === pendingStatusId);
+      const formData = new FormData();
+      formData.append(`${selectedDocKey}Status`, pendingStatusId);
+      await updatePersonalDocuments(docsState.id, formData);
+      setDocsState({
+        ...docsState,
+        [`${selectedDocKey}Status`]: statusObj
+      });
+    } catch (e) {
+      alert('Error al actualizar el estado');
+    }
+    setLoading(false);
+    setOpenConfirmDialog(false);
+    setPendingStatusId(null);
+    handleStatusClose();
+  };
+
+  const handleCancelReject = () => {
+    setOpenConfirmDialog(false);
+    setPendingStatusId(null);
+    handleStatusClose();
+  };
+
+  // Función para refrescar los datos desde el backend
+  const handleRefresh = async () => {
+    try {
+      const refreshedDocs = await getPersonalDocumentsByRecordId(docsState.id);
+      setDocsState(refreshedDocs);
+      if (onClose) {
+        onClose();
+      }
+      if (onDataChanged) {
+        onDataChanged();
+      }
+    } catch (e) {
+      alert('Error al refrescar los documentos');
+    }
+  };
+
   return (
     <>
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+      {docsState ? (
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
         <TableContainer component={Paper} sx={{ maxWidth: '95%', boxShadow: 3, borderRadius: 2, marginTop: 2 }}>
           <Table>
             <TableHead>
@@ -36,37 +140,110 @@ const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs }) => {
                 <TableCell>Tipo</TableCell>
                 <TableCell>Nombre</TableCell>
                 <TableCell>Acciones</TableCell>
+                <TableCell>Estado</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {documentTypes.map((doc) => {
-                const value = (personalDocs as any)[doc.key];
+                const value = (docsState as any)[doc.key];
                 const hasDoc = !!value;
+                const status = (docsState as any)[doc.statusKey];
                 return (
                   <TableRow key={doc.key}>
                     <TableCell>{doc.label}</TableCell>
                     <TableCell>{hasDoc ? value : '-'}</TableCell>
                     <TableCell>
                       {hasDoc ? (
+                        <div style={{ display: 'flex', gap: 8 }}>
                         <Button 
                           variant="contained" 
                           color="primary" 
                           size="small"
                           onClick={() => handlePreviewClick(doc.key, doc.label, value)}
-                        >
-                          Ver
+                            style={{ minWidth: 0, padding: 6 }}
+                          >
+                            <VisibilityIcon />
+                          </Button>
+                          <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="small"
+                            style={{ minWidth: 0, padding: 6 }}
+                            onClick={(e) => handleStatusClick(e, doc.key)}
+                            disabled={loading}
+                          >
+                            <SwapHorizIcon />
                         </Button>
+                        </div>
                       ) : (
-                        '-'
+                        <span style={{ color: '#888' }}>Sin archivo subido</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {hasDoc ? (
+                        status ? (
+                          <Chip label={status.name} color={getStatusColor(status.name)} />
+                        ) : (
+                          <Chip label="En revisión" color="warning" />
+                        )
+                      ) : (
+                        <Chip label="Sin estado" />
                       )}
                     </TableCell>
                   </TableRow>
                 );
               })}
             </TableBody>
+            {/* Fila para la fecha de subida */}
+            <TableBody>
+              <TableRow>
+                <TableCell colSpan={3} style={{ fontWeight: 'bold' }}>Fecha y hora de creación de usuario</TableCell>
+                <TableCell>{docsState.createdAt ? new Date(docsState.createdAt).toLocaleString('es-EC', { dateStyle: 'medium', timeStyle: 'short' }) : '-'}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell colSpan={3} style={{ fontWeight: 'bold' }}>Fecha y hora de subida</TableCell>
+                <TableCell>{docsState.updatedAt ? new Date(docsState.updatedAt).toLocaleString('es-EC', { dateStyle: 'medium', timeStyle: 'short' }) : '-'}</TableCell>
+              </TableRow>
+            </TableBody>
           </Table>
         </TableContainer>
       </div>
+      ) : (
+        <div style={{ textAlign: 'center', margin: '2rem' }}>No hay documentos personales para mostrar.</div>
+      )}
+      <br />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>
+        <Button variant="contained" color="primary" sx={{ mb: 2, alignSelf: 'flex-end' }} onClick={handleRefresh}>
+          Guardar cambios
+        </Button>
+      </div>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleStatusClose}
+      >
+        {statusOptions.filter(option => !option.name.toLowerCase().includes('revisión') && !option.name.toLowerCase().includes('revision')).map((option) => (
+          <MenuItem
+            key={option.id}
+            onClick={() => handleStatusChange(option.id)}
+            disabled={loading}
+          >
+            {option.name}
+          </MenuItem>
+        ))}
+      </Menu>
+
+      <ConfirmDialog
+        open={openConfirmDialog}
+        title="Confirmar rechazo"
+        message="¿Estás seguro de que deseas rechazar este documento? Esta acción eliminará el archivo asociado de inmediato y notificara al estudiante para corregir el documento."
+        onCancel={handleCancelReject}
+        onConfirm={handleConfirmReject}
+        loading={loading}
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+      />
 
       {showPreviewModal && previewFile && (
         <FilePreviewModal

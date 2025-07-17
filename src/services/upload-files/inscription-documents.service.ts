@@ -3,6 +3,7 @@ import { IInscriptionDocument } from "../../interfaces/IInscriptionDocument";
 import { IGlobal } from "../../global/IGlobal";
 
 const ENDPOINT = 'api1/inscription';
+const STATUS_ENDPOINT = 'api1/document-status';
 
 interface GetInscriptionDocumentsResponse {
   data: IInscriptionDocument[];
@@ -19,6 +20,10 @@ export const getAllInscriptionDocuments = async (): Promise<IInscriptionDocument
 
 export const deleteInscriptionDocument = async (id: string): Promise<void> => {
   await axiosInstance.delete(`${ENDPOINT}/delete-inscription-form/${id}`);
+};
+
+export const deleteInscriptionDocumentFile = async (id: string, field: string): Promise<void> => {
+  await axiosInstance.delete(`${ENDPOINT}/delete-file/${id}/${field}`);
 };
 
 export const getInscriptionDocumentsByRecordId = async (recordId: string): Promise<IInscriptionDocument> => {
@@ -66,8 +71,14 @@ export const updateInscriptionDocuments = async (
   );
 };
 
-export const updateInscriptionDocumentStatus = async (documentId: string, status: 'approved' | 'rejected' | 'pending'): Promise<void> => {
-  await axiosInstance.patch(`${ENDPOINT}/update-status/${documentId}`, { status }, {
-    withCredentials: true
-  });
+export const updateInscriptionDocumentStatus = async ( id: string, field: string, statusId: string ): Promise<void> => {
+  await axiosInstance.patch(`${ENDPOINT}/update-status/${id}`,
+    { field, statusId },
+    { withCredentials: true }
+  );
+};
+
+export const getDocumentStatuses = async (): Promise<{ id: string, name: string }[]> => {
+  const response = await axiosInstance.get<{ id: string, name: string }[]>(`${STATUS_ENDPOINT}`);
+  return response.data;
 };

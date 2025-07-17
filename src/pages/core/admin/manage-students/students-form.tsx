@@ -17,8 +17,9 @@ import {
   Visibility,
   VisibilityOff
 } from '@mui/icons-material';
-import axios from 'axios';
+import axiosInstance from '../../../../api/axios';
 import { useAuth } from '../../../../components/Context/context';
+import { useNavigate } from 'react-router-dom';
 
 interface Role {
   id: string;
@@ -40,29 +41,40 @@ const StudentsForm = () => {
     password: '',
     role_id: '',
     status_id: '',
-    is_approved: true,
+    semester_id: '',
+    career_id: '',
+    is_approved: false,
   });
 
   const [roles, setRoles] = useState<Role[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
+  const [semesters, setSemesters] = useState<any[]>([]);
+  const [careers, setCareers] = useState<any[]>([]);
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const { setOpenAlert } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const [rolesRes, statusesRes] = await Promise.all([
-          axios.get('http://localhost:3000/api1/roles'),
-          axios.get('http://localhost:3000/api1/status'),
+        const [rolesRes, statusesRes, semestersRes, careersRes] = await Promise.all([
+          axiosInstance.get('/api1/roles'),
+          axiosInstance.get('/api1/status'),
+          axiosInstance.get('/api1/semesters'),
+          axiosInstance.get('/api1/careers'),
         ]);
 
         const rolesData = rolesRes.data?.data ?? [];
         const statusesData = statusesRes.data?.data ?? [];
+        const semestersData = semestersRes.data?.data ?? [];
+        const careersData = careersRes.data?.data ?? [];
 
         setRoles(rolesData);
         setStatuses(statusesData);
+        setSemesters(semestersData);
+        setCareers(careersData);
 
         if (!formData.role_id && rolesData.length > 0) {
           setFormData(prev => ({ ...prev, role_id: rolesData[0].id }));
@@ -77,11 +89,11 @@ const StudentsForm = () => {
     fetchData();
   }, [setOpenAlert]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
+    const { name, value, type, checked } = e.target as any;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
@@ -102,12 +114,13 @@ const StudentsForm = () => {
         password: formData.password,
         role: formData.role_id,
         status: formData.status_id,
-        is_approved: true,
+        semester: formData.semester_id,
+        career: formData.career_id,
+        is_approved: formData.is_approved,
       };
-      await axios.post('http://localhost:3000/api1/users', userData);
+      await axiosInstance.post('/api1/users', userData);
       setOpenAlert({ open: true, type: "success", title: "Usuario creado con éxito" });
-      
-      // Limpiar el formulario después de crear el usuario
+      navigate('/students-list');
       setFormData({
         names: '',
         last_names: '',
@@ -116,7 +129,9 @@ const StudentsForm = () => {
         password: '',
         role_id: '',
         status_id: '',
-        is_approved: true,
+        semester_id: '',
+        career_id: '',
+        is_approved: false,
       });
     } catch (error: any) {
       console.error(error);
@@ -255,6 +270,46 @@ const StudentsForm = () => {
             </MenuItem>
           ))}
         </TextField>
+        <TextField
+          select
+          fullWidth
+          label="Semestre"
+          name="semester_id"
+          value={formData.semester_id}
+          onChange={handleChange}
+          variant="outlined"
+        >
+          {semesters.map((semester) => (
+            <MenuItem key={semester.id} value={semester.id}>
+              {semester.name}
+            </MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          fullWidth
+          label="Carrera"
+          name="career_id"
+          value={formData.career_id}
+          onChange={handleChange}
+          variant="outlined"
+        >
+          {careers.map((career) => (
+            <MenuItem key={career.id} value={career.id}>
+              {career.name}
+            </MenuItem>
+          ))}
+        </TextField>
+        <Box display="flex" alignItems="center">
+          <input
+            type="checkbox"
+            name="is_approved"
+            checked={formData.is_approved}
+            onChange={handleChange}
+            style={{ marginRight: 8 }}
+          />
+          <Typography>¿El estudiante esta homologado?</Typography>
+        </Box>
         <Button 
           type="submit" 
           variant="contained" 

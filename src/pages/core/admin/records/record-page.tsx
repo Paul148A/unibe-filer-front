@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Grid2, TableRow, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid2, TableRow, Typography, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IRecord } from "../../../../interfaces/IRecord";
@@ -30,52 +30,53 @@ const RecordPage = () => {
     const [permissionDocs, setPermissionDocs] = useState<IPermissionDocument[] | null>(null);
     const { setOpenAlert } = useAuth();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                console.log("Fetching record data for user ID:", id);
-                if (!id) {
-                    setOpenAlert({
-                        open: true,
-                        type: "error",
-                        title: "ID de usuario no proporcionado",
-                    });
-                    return;
-                }
-                const recordArr = await getRecordByUserId(id);
-                if (!recordArr || recordArr.length === 0) {
-                    setOpenAlert({
-                        open: true,
-                        type: "error",
-                        title: "No se encontró el expediente para el usuario con ID: " + id,
-                    });
-                    return;
-                }
-                const recordData = recordArr[0];
-                setRecord(recordData);
-                const personalDocuments = await getPersonalDocumentsByRecordId(recordData.id);
-                setPersonalDocs(personalDocuments);
-                const degreeDocuments = await getDegreeDocumentsByRecordId(recordData.id);
-                setDegreeDocs(degreeDocuments);
-                const inscriptionDocuments = await getInscriptionDocumentsByRecordId(recordData.id);
-                setInscriptionDocs(inscriptionDocuments);
+    const fetchData = async () => {
+        try {
+            console.log("Fetching record data for user ID:", id);
+            if (!id) {
+                setOpenAlert({
+                    open: true,
+                    type: "error",
+                    title: "ID de usuario no proporcionado",
+                });
+                return;
+            }
+            const recordArr = await getRecordByUserId(id);
+            if (!recordArr || recordArr.length === 0) {
+                setOpenAlert({
+                    open: true,
+                    type: "error",
+                    title: "No se encontró el expediente para el usuario con ID: " + id,
+                });
+                return;
+            }
+            const recordData = recordArr[0];
+            setRecord(recordData);
+            const personalDocuments = await getPersonalDocumentsByRecordId(recordData.id);
+            setPersonalDocs(personalDocuments);
+            const degreeDocuments = await getDegreeDocumentsByRecordId(recordData.id);
+            setDegreeDocs(degreeDocuments);
+            const inscriptionDocuments = await getInscriptionDocumentsByRecordId(recordData.id);
+            setInscriptionDocs(inscriptionDocuments);
                 const gradeDocuments = await getGradesByInscriptionDocumentsId(inscriptionDocuments.id);
                 setGradeDocs(gradeDocuments);
                 const enrollmentDocuments = await getEnrollmentsByInscriptionDocumentsId(inscriptionDocuments.id);
                 setEnrollmentDocs(enrollmentDocuments);
                 const permissionDocuments = await PermissionDocumentsService.getPermissionDocumentsByRecordId(recordData.id);
                 setPermissionDocs(permissionDocuments.data);
-                if (!personalDocuments || !degreeDocuments || !inscriptionDocuments) {
-                    setOpenAlert({
-                        open: true,
-                        type: "error",
-                        title: "No se encontraron documentos para el usuario con ID: " + id,
-                    });
-                }
-            } catch (error) {
-                console.error("Error fetching record data:", error);
+            if (!personalDocuments || !degreeDocuments || !inscriptionDocuments) {
+                setOpenAlert({
+                    open: true,
+                    type: "error",
+                    title: "No se encontraron documentos para el usuario con ID: " + id,
+                });
             }
-        };
+        } catch (error) {
+            console.error("Error fetching record data:", error);
+        }
+    };
+
+    useEffect(() => {
         fetchData();
     }, [id]);
     return (
@@ -102,6 +103,7 @@ const RecordPage = () => {
                                     title='Documentos Personales'
                                     description='Documentos personales del estudiante'
                                     sectionType='personal'
+                                    onDataChanged={fetchData}
                                 />}
                         </Grid2>
                         <Grid2 size={4}>
@@ -112,6 +114,7 @@ const RecordPage = () => {
                                     title='Documentos de Título'
                                     description='Documentos relacionados al título del estudiante'
                                     sectionType='degree'
+                                    onDataChanged={fetchData}
                                 />}
                         </Grid2>
                         <Grid2 size={4}>
@@ -122,6 +125,7 @@ const RecordPage = () => {
                                     title='Documentos de Inscripción'
                                     description='Documentos relacionados a la inscripción del estudiante'
                                     sectionType='inscription'
+                                    onDataChanged={fetchData}
                                 />}
                         </Grid2>
                     </Grid2>

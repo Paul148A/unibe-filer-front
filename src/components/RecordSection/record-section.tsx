@@ -11,6 +11,7 @@ interface Props {
     description: string;
     sectionType: string;
     docs: IPersonalDocument | IDegreeDocument | IInscriptionDocument;
+    onDataChanged?: () => void;
 }
 
 const RecordSection = (props: Props) => {
@@ -49,6 +50,7 @@ const RecordSection = (props: Props) => {
                 docs={props.docs}
                 open={open}
                 onClose={handleClose}
+                onDataChanged={props.onDataChanged}
             />
         </>
     )
