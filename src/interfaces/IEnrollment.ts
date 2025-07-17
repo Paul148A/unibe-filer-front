@@ -1,7 +1,7 @@
-export interface IGrade {
+export interface IEnrollment {
     id?: string;
-    name: string;
-    description: string;
     inscriptionDocumentId: string;
     semesterId: string;
+    name: string;
+    description: string;
 }

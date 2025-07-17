@@ -1,4 +1,4 @@
-import { Grid2, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid2, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IRecord } from "../../../../interfaces/IRecord";
@@ -11,6 +11,13 @@ import { getPersonalDocumentsByRecordId } from "../../../../services/upload-file
 import { getDegreeDocumentsByRecordId } from "../../../../services/upload-files/degree-documents.service";
 import { getInscriptionDocumentsByRecordId } from "../../../../services/upload-files/inscription-documents.service";
 import RecordSection from "../../../../components/RecordSection/record-section";
+import { IGrade } from "../../../../interfaces/IGrade";
+import { getGradesByInscriptionDocumentsId } from "../../../../services/upload-files/grade.service";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { IEnrollment } from "../../../../interfaces/IEnrollment";
+import { getEnrollmentsByInscriptionDocumentsId } from "../../../../services/upload-files/enrollment.service";
+import { IPermissionDocument } from "../../../../interfaces/IPermissionDocument";
+import { PermissionDocumentsService } from "../../../../services/upload-files/permission-documents.service";
 
 const RecordPage = () => {
     const { id } = useParams<{ id: string }>();
@@ -18,6 +25,9 @@ const RecordPage = () => {
     const [personalDocs, setPersonalDocs] = useState<IPersonalDocument | null>(null);
     const [degreeDocs, setDegreeDocs] = useState<IDegreeDocument | null>(null);
     const [inscriptionDocs, setInscriptionDocs] = useState<IInscriptionDocument | null>(null);
+    const [gradeDocs, setGradeDocs] = useState<IGrade[] | null>(null);
+    const [enrollmentDocs, setEnrollmentDocs] = useState<IEnrollment[] | null>(null);
+    const [permissionDocs, setPermissionDocs] = useState<IPermissionDocument[] | null>(null);
     const { setOpenAlert } = useAuth();
 
     useEffect(() => {
@@ -49,7 +59,12 @@ const RecordPage = () => {
                 setDegreeDocs(degreeDocuments);
                 const inscriptionDocuments = await getInscriptionDocumentsByRecordId(recordData.id);
                 setInscriptionDocs(inscriptionDocuments);
-
+                const gradeDocuments = await getGradesByInscriptionDocumentsId(inscriptionDocuments.id);
+                setGradeDocs(gradeDocuments);
+                const enrollmentDocuments = await getEnrollmentsByInscriptionDocumentsId(inscriptionDocuments.id);
+                setEnrollmentDocs(enrollmentDocuments);
+                const permissionDocuments = await PermissionDocumentsService.getPermissionDocumentsByRecordId(recordData.id);
+                setPermissionDocs(permissionDocuments.data);
                 if (!personalDocuments || !degreeDocuments || !inscriptionDocuments) {
                     setOpenAlert({
                         open: true,
@@ -111,6 +126,54 @@ const RecordPage = () => {
                         </Grid2>
                     </Grid2>
                 </Grid2>
+            </Grid2>
+            <br />
+            <Grid2>
+                <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6" gutterBottom>
+                            Documentos de Notas
+                        </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {gradeDocs ? gradeDocs.map((grade) => (
+                            <TableRow
+                                key={grade.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >{grade.name}</TableRow>
+                        )): (<TableRow> Aun no hay documentos de notas cargados</TableRow>)}
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6" gutterBottom>
+                            Documentos de Matrícula
+                        </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {enrollmentDocs ? enrollmentDocs.map((enrollment) => (
+                            <TableRow
+                                key={enrollment.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >{enrollment.name}</TableRow>
+                        )): (<TableRow> Aun no hay documentos de matrícula cargados</TableRow>)}
+                    </AccordionDetails>
+                </Accordion>
+                <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                        <Typography variant="h6" gutterBottom>
+                            Permisos y notificaciones
+                        </Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                        {permissionDocs ? permissionDocs.map((permission) => (
+                            <TableRow
+                                key={permission.id}
+                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                            >{permission.supportingDoc}</TableRow>
+                        )): (<TableRow> No hay permisos ni notificaciones cargados</TableRow>)}
+                    </AccordionDetails>
+                </Accordion>
             </Grid2>
         </>
     )

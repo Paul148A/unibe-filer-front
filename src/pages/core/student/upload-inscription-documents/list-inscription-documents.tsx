@@ -12,10 +12,11 @@ import FilePreviewModal from "../../../../components/Modals/FilePreviewModal/fil
 import CloseIcon from '@mui/icons-material/Close';
 import GradeModal from "../../../../components/GradeModal/grade-modal";
 import { useParams } from "react-router-dom";
+import EnrollmentModal from "../../../../components/EnrollmentModal/enrollment-modal";
 
 
 const ListInscriptionDocuments = () => {
-  const {recordId} = useParams<{ recordId: string }>();
+  const { recordId } = useParams<{ recordId: string }>();
   const [documents, setDocuments] = useState<IInscriptionDocument | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedDocument, setSelectedDocument] = useState<IInscriptionDocument | null>(null);
@@ -23,6 +24,7 @@ const ListInscriptionDocuments = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
   const [openGradeModal, setOpenGradeModal] = useState(false);
+  const [openEnrollmentModal, setOpenEnrollmentModal] = useState(false);
   const { setOpenAlert } = useAuth();
 
   useEffect(() => {
@@ -60,8 +62,16 @@ const ListInscriptionDocuments = () => {
     setOpenGradeModal(true);
   };
 
+  const handleEnrollmentClick = () => {
+    setOpenEnrollmentModal(true);
+  };
+
   const handleCloseGradeModal = () => {
     setOpenGradeModal(false);
+  };
+
+  const handleCloseEnrollmentModal = () => {
+    setOpenEnrollmentModal(false);
   };
 
   const handleUpdateSuccess = () => {
@@ -141,16 +151,26 @@ const ListInscriptionDocuments = () => {
 
   return (
     <>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3, mt: 2, ml: 5 }}>
         <Typography variant="h4" component="h2">
           Lista de Documentos de Inscripción
         </Typography>
+      </Box>
+      <Box sx={{ display: 'flex', justifyContent: 'right', alignItems: 'center', mb: 3, mt: 2, mr: 5 }}>
         <Box sx={{ display: 'flex', gap: 2 }}>
           <Button
-            variant="outlined"
+            sx={{backgroundColor: 'green', color: 'white'}}
+            startIcon={<EditIcon />}
+            onClick={handleEnrollmentClick}
+          //disabled={documents}
+          >
+            Agregar documento de matrícula
+          </Button>
+          <Button
+            sx={{backgroundColor: 'blue', color: 'white'}}
             startIcon={<EditIcon />}
             onClick={handleGradeClick}
-            //disabled={documents}
+          //disabled={documents}
           >
             Agregar documento de notas
           </Button>
@@ -228,7 +248,27 @@ const ListInscriptionDocuments = () => {
           </IconButton>
         </DialogTitle>
         <DialogContent>
-          <GradeModal inscriptionId={documents ? documents.id : ''}/>
+          <GradeModal inscriptionId={documents ? documents.id : ''} />
+        </DialogContent>
+      </Dialog>
+      <Dialog open={openEnrollmentModal} onClose={handleCloseEnrollmentModal}>
+        <DialogTitle>
+          Subir documento de matrícula
+          <IconButton
+            aria-label="close"
+            onClick={handleCloseEnrollmentModal}
+            sx={{
+              position: 'absolute',
+              right: 8,
+              top: 8,
+              color: (theme) => theme.palette.grey[500],
+            }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <EnrollmentModal inscriptionId={documents ? documents.id : ''} />
         </DialogContent>
       </Dialog>
     </>
