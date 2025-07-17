@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Grid2, TableRow, Typography, Button } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid2, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IRecord } from "../../../../interfaces/IRecord";
@@ -58,12 +58,12 @@ const RecordPage = () => {
             setDegreeDocs(degreeDocuments);
             const inscriptionDocuments = await getInscriptionDocumentsByRecordId(recordData.id);
             setInscriptionDocs(inscriptionDocuments);
-                const gradeDocuments = await getGradesByInscriptionDocumentsId(inscriptionDocuments.id);
-                setGradeDocs(gradeDocuments);
-                const enrollmentDocuments = await getEnrollmentsByInscriptionDocumentsId(inscriptionDocuments.id);
-                setEnrollmentDocs(enrollmentDocuments);
-                const permissionDocuments = await PermissionDocumentsService.getPermissionDocumentsByRecordId(recordData.id);
-                setPermissionDocs(permissionDocuments.data);
+            const gradeDocuments = await getGradesByInscriptionDocumentsId(inscriptionDocuments.id);
+            setGradeDocs(gradeDocuments);
+            const enrollmentDocuments = await getEnrollmentsByInscriptionDocumentsId(inscriptionDocuments.id);
+            setEnrollmentDocs(enrollmentDocuments);
+            const permissionDocuments = await PermissionDocumentsService.getPermissionDocumentsByRecordId(recordData.id);
+            setPermissionDocs(permissionDocuments.data);
             if (!personalDocuments || !degreeDocuments || !inscriptionDocuments) {
                 setOpenAlert({
                     open: true,
@@ -145,7 +145,7 @@ const RecordPage = () => {
                                 key={grade.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >{grade.name}</TableRow>
-                        )): (<TableRow> Aun no hay documentos de notas cargados</TableRow>)}
+                        )) : (<TableRow> Aun no hay documentos de notas cargados</TableRow>)}
                     </AccordionDetails>
                 </Accordion>
                 <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
@@ -160,7 +160,7 @@ const RecordPage = () => {
                                 key={enrollment.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >{enrollment.name}</TableRow>
-                        )): (<TableRow> Aun no hay documentos de matrícula cargados</TableRow>)}
+                        )) : (<TableRow> Aun no hay documentos de matrícula cargados</TableRow>)}
                     </AccordionDetails>
                 </Accordion>
                 <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
@@ -175,7 +175,7 @@ const RecordPage = () => {
                                 key={permission.id}
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >{permission.supportingDoc}</TableRow>
-                        )): (<TableRow> No hay permisos ni notificaciones cargados</TableRow>)}
+                        )) : (<TableRow> No hay permisos ni notificaciones cargados</TableRow>)}
                     </AccordionDetails>
                 </Accordion>
             </Grid2>
