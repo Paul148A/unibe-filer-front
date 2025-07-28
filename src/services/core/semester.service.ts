@@ -1,7 +1,7 @@
 import axiosInstance from "../../api/axios";
 import { ISemester } from "../../interfaces/ISemester";
 
-const ENDPOINT = 'api1/semester';
+const ENDPOINT = 'api1/semesters';
 
 interface GetSemesterResponse {
   data: ISemester[];

@@ -86,31 +86,6 @@ const ListPersonalDocuments = () => {
     }
   };
 
-  const handlePreviewClick = (doc: IPersonalDocument) => {
-    const files = [
-      { key: 'pictureDoc', name: 'Foto Carnet', url: doc.pictureDoc },
-      { key: 'dniDoc', name: 'Cédula de Identidad', url: doc.dniDoc },
-      { key: 'votingBallotDoc', name: 'Papeleta de Votación', url: doc.votingBallotDoc },
-      { key: 'notarizDegreeDoc', name: 'Título Notariado', url: doc.notarizDegreeDoc },
-    ];
-
-    const firstAvailableFile = files.find(file => file.url && file.url.trim() !== '');
-    
-    if (firstAvailableFile) {
-      setPreviewFile({
-        url: firstAvailableFile.url,
-        name: firstAvailableFile.name
-      });
-      setShowPreviewModal(true);
-    } else {
-      setOpenAlert({
-        open: true,
-        type: "warning",
-        title: "No hay archivos disponibles para previsualizar",
-      });
-    }
-  };
-
   const handleFieldPreviewClick = (_doc: IPersonalDocument, _fieldKey: string, fieldName: string, fieldValue: string) => {
     setPreviewFile({
       url: fieldValue,
@@ -143,13 +118,6 @@ const ListPersonalDocuments = () => {
             onClick={handleRefresh}
           >
             Refrescar
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={() => documents && handlePreviewClick(documents)}
-            disabled={!documents}
-          >
-            Previsualizar
           </Button>
         </Box>
       </Box>

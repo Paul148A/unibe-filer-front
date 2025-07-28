@@ -110,33 +110,6 @@ const ListInscriptionDocuments = () => {
     }
   };
 
-  const handlePreviewClick = (doc: IInscriptionDocument) => {
-    const files = [
-      { key: 'registrationDoc', name: 'Documento de Registro', url: doc.registrationDoc },
-      { key: 'semesterGradeChartDoc', name: 'Documento de Notas', url: doc.semesterGradeChartDoc },
-      { key: 'reEntryDoc', name: 'Documento de Reingreso', url: doc.reEntryDoc },
-      { key: 'englishCertificateDoc', name: 'Certificado de Inglés', url: doc.englishCertificateDoc },
-      { key: 'enrollmentCertificateDoc', name: 'Certificado de Matrícula', url: doc.enrollmentCertificateDoc },
-      { key: 'approvalDoc', name: 'Documento de Aprobación', url: doc.approvalDoc },
-    ];
-
-    const firstAvailableFile = files.find(file => file.url && file.url.trim() !== '');
-
-    if (firstAvailableFile) {
-      setPreviewFile({
-        url: firstAvailableFile.url,
-        name: firstAvailableFile.name
-      });
-      setShowPreviewModal(true);
-    } else {
-      setOpenAlert({
-        open: true,
-        type: "warning",
-        title: "No hay archivos disponibles para previsualizar",
-      });
-    }
-  };
-
   const handleFieldPreviewClick = (_doc: IInscriptionDocument, _fieldKey: string, fieldName: string, fieldValue: string) => {
     setPreviewFile({
       url: fieldValue,
@@ -188,13 +161,6 @@ const ListInscriptionDocuments = () => {
             onClick={handleRefresh}
           >
             Refrescar
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={() => documents && handlePreviewClick(documents)}
-            disabled={!documents}
-          >
-            Previsualizar
           </Button>
         </Box>
       </Box>

@@ -19,7 +19,6 @@ const VerticalTable = <T,>({
   data,
   columns,
   actionKeys,
-  renderActions,
   onEditClick,
   onDeleteClick,
   onRefreshClick,

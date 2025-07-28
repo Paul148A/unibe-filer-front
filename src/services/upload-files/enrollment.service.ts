@@ -1,7 +1,7 @@
 import axiosInstance from "../../api/axios";
 import { IEnrollment } from "../../interfaces/IEnrollment";
 
-const ENDPOINT = 'api1/enrollments';
+const ENDPOINT = 'api1/enrollment';
 
 interface GetEnrollmentResponse {
   data: IEnrollment[];

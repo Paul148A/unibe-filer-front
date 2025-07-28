@@ -86,35 +86,6 @@ const ListDegreeDocuments = () => {
     }
   };
 
-  const handlePreviewClick = (doc: IDegreeDocument) => {
-    const files = [
-      { key: 'topicComplainDoc', name: 'Solicitud de Tema', url: doc.topicComplainDoc },
-      { key: 'topicApprovalDoc', name: 'Aprobación de Tema', url: doc.topicApprovalDoc },
-      { key: 'tutorAssignmentDoc', name: 'Asignación de Tutor', url: doc.tutorAssignmentDoc },
-      { key: 'tutorFormatDoc', name: 'Formato de Tutor', url: doc.tutorFormatDoc },
-      { key: 'antiplagiarismDoc', name: 'Antiplagio', url: doc.antiplagiarismDoc },
-      { key: 'tutorLetter', name: 'Carta de Tutor', url: doc.tutorLetter },
-      { key: 'electiveGrade', name: 'Nota Electivo', url: doc.electiveGrade },
-      { key: 'academicClearance', name: 'Libre de Deuda', url: doc.academicClearance },
-    ];
-
-    const firstAvailableFile = files.find(file => file.url && file.url.trim() !== '');
-    
-    if (firstAvailableFile) {
-      setPreviewFile({
-        url: firstAvailableFile.url,
-        name: firstAvailableFile.name
-      });
-      setShowPreviewModal(true);
-    } else {
-      setOpenAlert({
-        open: true,
-        type: "warning",
-        title: "No hay archivos disponibles para previsualizar",
-      });
-    }
-  };
-
   const handleFieldPreviewClick = (_doc: IDegreeDocument, _fieldKey: string, fieldName: string, fieldValue: string) => {
     setPreviewFile({
       url: fieldValue,
@@ -147,13 +118,6 @@ const ListDegreeDocuments = () => {
             onClick={handleRefresh}
           >
             Refrescar
-          </Button>
-          <Button
-            variant="outlined"
-            onClick={() => documents && handlePreviewClick(documents)}
-            disabled={!documents}
-          >
-            Previsualizar
           </Button>
         </Box>
       </Box>
