@@ -13,3 +13,8 @@ export const getAllRoles = async (): Promise<IRole[]> => {
   const response = await axiosInstance.get<GetRolesResponse>(`${ENDPOINT}`);
   return response.data.data;
 };
+
+export const getStudentRole = async (): Promise<IRole | null> => {
+  const roles = await getAllRoles();
+  return roles.find(role => role.name === 'student') || null;
+}

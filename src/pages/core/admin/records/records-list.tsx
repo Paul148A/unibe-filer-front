@@ -52,7 +52,7 @@ const RecordsList = () => {
 
   return (
     <>
-      <Typography sx={{ mb: 2 , ml: 5, mt: 2 }} variant="h4" component="h2" gutterBottom>
+      <Typography sx={{ mb: 2, ml: 5, mt: 2 }} variant="h4" component="h2" gutterBottom>
         Lista de Expedientes
       </Typography>
       <Box sx={{ ml: 5 }}>
@@ -70,44 +70,46 @@ const RecordsList = () => {
           No se encontraron resultados para "{searchText}".
         </Typography>
       ) : (
-        <CustomTable<IRecord>
-          data={filteredRecords}
-          columns={[
-            { key: "code", label: "Código" },
-            {
-              key: "user",
-              label: "Usuario",
-              render: (value) => {
-                if (
-                  typeof value === "object" &&
-                  value !== null &&
-                  "names" in value &&
-                  "last_names" in value
-                ) {
-                  return `${value.names} ${value.last_names}`;
-                }
-                return "";
+        <Box sx={{ mt: 2, height: "calc(100vh - 200px)", overflowY: "auto" }}>
+          <CustomTable<IRecord>
+            data={filteredRecords}
+            columns={[
+              { key: "code", label: "Código" },
+              {
+                key: "user",
+                label: "Usuario",
+                render: (value) => {
+                  if (
+                    typeof value === "object" &&
+                    value !== null &&
+                    "names" in value &&
+                    "last_names" in value
+                  ) {
+                    return `${value.names} ${value.last_names}`;
+                  }
+                  return "";
+                },
               },
-            },
-            {
-              key: "user",
-              label: "Identificación",
-              render: (value) =>
-                typeof value === "object" && value !== null && "identification" in value
-                  ? value.identification
-                  : "",
-            },
-            {
-              key: "user",
-              label: "Email",
-              render: (value) =>
-                typeof value === "object" && value !== null && "email" in value
-                  ? value.email
-                  : "",
-            },
-          ]}
-          actionKeys={["DescargarExpediente", "RevisarExpediente"]}
-        />
+              {
+                key: "user",
+                label: "Identificación",
+                render: (value) =>
+                  typeof value === "object" && value !== null && "identification" in value
+                    ? value.identification
+                    : "",
+              },
+              {
+                key: "user",
+                label: "Email",
+                render: (value) =>
+                  typeof value === "object" && value !== null && "email" in value
+                    ? value.email
+                    : "",
+              },
+            ]}
+            actionKeys={["RevisarExpediente"]}
+          />
+        </Box>
       )}
     </>
   );

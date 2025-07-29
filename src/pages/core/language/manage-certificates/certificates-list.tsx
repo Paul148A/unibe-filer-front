@@ -7,7 +7,7 @@ import CustomTable from "../../../../components/CustomTable/custom-table";
 import { getAllRecords } from "../../../../services/upload-files/record.service";
 import { getInscriptionDocumentsByRecordId, updateInscriptionDocumentStatus, getDocumentStatuses } from "../../../../services/upload-files/inscription-documents.service";
 import Loader from "../../../../components/Loader/loader";
-import { Typography, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem } from "@mui/material";
+import { Typography, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
 import ConfirmDialog from '../../../../components/Global/ConfirmDialog';
 
 interface RecordWithInscription extends IRecord {
@@ -72,7 +72,7 @@ const CertificatesList = () => {
         return;
       }
       await updateInscriptionDocumentStatus(selectedRecord.inscriptionDocuments[0].id, 'englishCertificateDocStatus', statusId);
-      setRecords(prevRecords => 
+      setRecords(prevRecords =>
         prevRecords.map(record => {
           if (record.id === selectedRecord.id && record.inscriptionDocuments?.[0]) {
             return {
@@ -106,7 +106,7 @@ const CertificatesList = () => {
     try {
       const statusObj = statusOptions.find(s => s.id === pendingStatusId);
       await updateInscriptionDocumentStatus(selectedRecord.inscriptionDocuments[0].id, 'englishCertificateDocStatus', pendingStatusId);
-      setRecords(prevRecords => 
+      setRecords(prevRecords =>
         prevRecords.map(record => {
           if (record.id === selectedRecord.id && record.inscriptionDocuments?.[0]) {
             return {
@@ -162,74 +162,76 @@ const CertificatesList = () => {
       <Typography variant="h4" component="h2" gutterBottom>
         Lista de Estudiantes con Certificado de Inglés
       </Typography>
-      <CustomTable<RecordWithInscription>
-        data={records}
-        columns={[
-          { key: "code", label: "Código" },
-          { 
-            key: "user", 
-            label: "Usuario",
-            render: (value) => {
-              if (typeof value === "object" && value !== null && "names" in value && "last_names" in value) {
-                return `${value.names} ${value.last_names}`;
+      <Box sx={{ mt: 2, height: "calc(100vh - 200px)", overflowY: "auto" }}>
+        <CustomTable<RecordWithInscription>
+          data={records}
+          columns={[
+            { key: "code", label: "Código" },
+            {
+              key: "user",
+              label: "Usuario",
+              render: (value) => {
+                if (typeof value === "object" && value !== null && "names" in value && "last_names" in value) {
+                  return `${value.names} ${value.last_names}`;
+                }
+                return "";
               }
-              return "";
-            }
-          },
-          { 
-            key: "user", 
-            label: "Identificación",
-            render: (value) => (typeof value === "object" && value !== null && "identification" in value ? value.identification : "")
-          },
-          { 
-            key: "user", 
-            label: "Email",
-            render: (value) => (typeof value === "object" && value !== null && "email" in value ? value.email : "")
-          },
-          {
-            key: "inscriptionDocuments",
-            label: "Estado del Certificado",
-            render: (value: string | IInscriptionDocument[] | IUser | undefined) => {
-              if (!Array.isArray(value) || !value[0]) {
-                return <Typography color="text.secondary">Sin estado</Typography>;
+            },
+            {
+              key: "user",
+              label: "Identificación",
+              render: (value) => (typeof value === "object" && value !== null && "identification" in value ? value.identification : "")
+            },
+            {
+              key: "user",
+              label: "Email",
+              render: (value) => (typeof value === "object" && value !== null && "email" in value ? value.email : "")
+            },
+            {
+              key: "inscriptionDocuments",
+              label: "Estado del Certificado",
+              render: (value: string | IInscriptionDocument[] | IUser | undefined) => {
+                if (!Array.isArray(value) || !value[0]) {
+                  return <Typography color="text.secondary">Sin estado</Typography>;
+                }
+                const doc = value[0] as IInscriptionDocument;
+                const statusObj = doc.englishCertificateDocStatus;
+                if (!doc.englishCertificateDoc) {
+                  return <Typography color="text.secondary">Sin archivo subido</Typography>;
+                }
+                return (
+                  <Typography
+                    onClick={() => {
+                      const record = records.find(r =>
+                        r.inscriptionDocuments?.[0]?.id === doc.id
+                      );
+                      setSelectedRecord(record || null);
+                      setOpenDialog(true);
+                    }}
+                    sx={{
+                      color: `${getStatusColor(statusObj?.name || '')}.main`,
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        textDecoration: 'underline',
+                        opacity: 0.8
+                      },
+                      display: 'inline-block',
+                      padding: '4px 8px',
+                      borderRadius: '4px',
+                      backgroundColor: `${getStatusColor(statusObj?.name || '')}.lighter`,
+                      transition: 'all 0.2s ease-in-out'
+                    }}
+                  >
+                    {getStatusText(statusObj?.name || (doc.englishCertificateDoc ? 'En revisión' : ''))}
+                  </Typography>
+                );
               }
-              const doc = value[0] as IInscriptionDocument;
-              const statusObj = doc.englishCertificateDocStatus;
-              if (!doc.englishCertificateDoc) {
-                return <Typography color="text.secondary">Sin archivo subido</Typography>;
-              }
-              return (
-                <Typography
-                  onClick={() => {
-                    const record = records.find(r =>
-                      r.inscriptionDocuments?.[0]?.id === doc.id
-                    );
-                    setSelectedRecord(record || null);
-                    setOpenDialog(true);
-                  }}
-                  sx={{
-                    color: `${getStatusColor(statusObj?.name || '')}.main`,
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    '&:hover': {
-                      textDecoration: 'underline',
-                      opacity: 0.8
-                    },
-                    display: 'inline-block',
-                    padding: '4px 8px',
-                    borderRadius: '4px',
-                    backgroundColor: `${getStatusColor(statusObj?.name || '')}.lighter`,
-                    transition: 'all 0.2s ease-in-out'
-                  }}
-                >
-                  {getStatusText(statusObj?.name || (doc.englishCertificateDoc ? 'En revisión' : ''))}
-                </Typography>
-              );
-            }
-          },
-        ]}
-        actionKeys={["RevisarCertificadoIngles"]}
-      />
+            },
+          ]}
+          actionKeys={["RevisarCertificadoIngles"]}
+        />
+      </Box>
 
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Cambiar Estado del Certificado</DialogTitle>

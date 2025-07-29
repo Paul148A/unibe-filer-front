@@ -1,17 +1,9 @@
-import { Box, AppBar, Toolbar, IconButton, Typography, Menu, MenuItem } from "@mui/material"
+import { Box, AppBar, Toolbar, IconButton, Typography } from "@mui/material"
 import MenuIcon from '@mui/icons-material/Menu';
-import UseNavbar from "./hooks/use-navbar";
-import AccountCircle from '@mui/icons-material/AccountCircle';
 import { useAuth } from "../Context/context";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const {
-    anchorEl,
-    handleMenu,
-    handleClose,
-    handleLogout,
-  } = UseNavbar()
-
   const {
     userInfo,
     handleSidebar,
@@ -31,34 +23,13 @@ const Navbar = () => {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <img src="./logoUnibe.png" alt="" width="120" height="55" style={{ marginTop: 4 }} />
+          </Link>
+          <Box sx={{ flexGrow: 1 }} />
+          <Typography variant="h6" component="div">
             {userInfo?.names}
           </Typography>
-          <div>
-            <IconButton
-              size="large"
-              onClick={handleMenu}
-              color="inherit"
-            >
-              <AccountCircle />
-              <Typography variant="h6">
-                {userInfo?.names}
-              </Typography>
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-            >
-              <MenuItem onClick={handleLogout}>Cerrar Sesión</MenuItem>
-              <MenuItem onClick={handleClose}>Profile</MenuItem>
-            </Menu>
-          </div>
         </Toolbar>
       </AppBar>
     </Box>

@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom"
 import Navbar from "../components/Navbar/navbar"
 import Sidebar from "../components/SideBar/sidebar"
 import { useAuth } from "../components/Context/context"
+import Footer from "../components/footer/footer"
 
 const Template = () => {
     const {userInfo, openSidebar ,handleCloseSidebar} = useAuth();
@@ -12,6 +13,7 @@ const Template = () => {
             <main>
                 <Outlet />
             </main>
+            <Footer />
         </div>
     )
 }

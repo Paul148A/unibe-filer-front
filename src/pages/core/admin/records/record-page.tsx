@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Grid2, TableRow, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Chip, Grid2, TableRow, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { IRecord } from "../../../../interfaces/IRecord";
@@ -129,56 +129,75 @@ const RecordPage = () => {
                                 />}
                         </Grid2>
                     </Grid2>
+                    <Grid2>
+                        <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 2, mr: 2 }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography variant="h6" gutterBottom>
+                                    Documentos de Notas
+                                </Typography>
+                                <Chip
+                                    label={`${gradeDocs ? gradeDocs.length : 0} Documentos`}
+                                    color="secondary"
+                                    variant="outlined"
+                                    sx={{ borderColor: "#d500f9", color: "#d500f9", ml: 2 }}
+                                />
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {gradeDocs ? gradeDocs.map((grade) => (
+                                    <TableRow
+                                        key={grade.id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >{grade.name}</TableRow>
+                                )) : (<TableRow> Aun no hay documentos de notas cargados</TableRow>)}
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 2, mr: 2 }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography variant="h6" gutterBottom>
+                                    Documentos de Matrícula
+                                </Typography>
+                                <Chip
+                                    label={`${enrollmentDocs ? enrollmentDocs.length : 0} Documentos`}
+                                    color="secondary"
+                                    variant="outlined"
+                                    sx={{ borderColor: "#d500f9", color: "#d500f9", ml: 2 }}
+                                />
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {enrollmentDocs ? enrollmentDocs.map((enrollment) => (
+                                    <TableRow
+                                        key={enrollment.id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >{enrollment.name}</TableRow>
+                                )) : (<TableRow> Aun no hay documentos de matrícula cargados</TableRow>)}
+                            </AccordionDetails>
+                        </Accordion>
+                        <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 2, mr: 2 }}>
+                            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                                <Typography variant="h6" gutterBottom>
+                                    Permisos y notificaciones
+                                </Typography>
+                                <Chip
+                                    label={`${permissionDocs ? permissionDocs.length : 0} Documentos`}
+                                    color="secondary"
+                                    variant="outlined"
+                                    sx={{ borderColor: "#d500f9", color: "#d500f9", ml: 2 }}
+                                />
+                            </AccordionSummary>
+                            <AccordionDetails>
+                                {permissionDocs ? permissionDocs.map((permission) => (
+                                    <TableRow
+                                        key={permission.id}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >{permission.supportingDoc}</TableRow>
+                                )) : (<TableRow> No hay permisos ni notificaciones cargados</TableRow>)}
+                            </AccordionDetails>
+                        </Accordion>
+                        <br />
+                    </Grid2>
                 </Grid2>
             </Grid2>
             <br />
-            <Grid2>
-                <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6" gutterBottom>
-                            Documentos de Notas
-                        </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        {gradeDocs ? gradeDocs.map((grade) => (
-                            <TableRow
-                                key={grade.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >{grade.name}</TableRow>
-                        )) : (<TableRow> Aun no hay documentos de notas cargados</TableRow>)}
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6" gutterBottom>
-                            Documentos de Matrícula
-                        </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        {enrollmentDocs ? enrollmentDocs.map((enrollment) => (
-                            <TableRow
-                                key={enrollment.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >{enrollment.name}</TableRow>
-                        )) : (<TableRow> Aun no hay documentos de matrícula cargados</TableRow>)}
-                    </AccordionDetails>
-                </Accordion>
-                <Accordion sx={{ boxShadow: 3, borderRadius: 2, marginTop: 2, ml: 20, mr: 20 }}>
-                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6" gutterBottom>
-                            Permisos y notificaciones
-                        </Typography>
-                    </AccordionSummary>
-                    <AccordionDetails>
-                        {permissionDocs ? permissionDocs.map((permission) => (
-                            <TableRow
-                                key={permission.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >{permission.supportingDoc}</TableRow>
-                        )) : (<TableRow> No hay permisos ni notificaciones cargados</TableRow>)}
-                    </AccordionDetails>
-                </Accordion>
-            </Grid2>
         </>
     )
 }
