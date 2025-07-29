@@ -82,7 +82,6 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
         [`${selectedDocKey}Status`]: statusObj
       });
       
-      // Mostrar alerta de éxito
       if (statusObj && statusObj.name.toLowerCase().includes('aprobado')) {
         setOpenAlert({
           open: true,
@@ -118,7 +117,6 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
         [`${selectedDocKey}Status`]: statusObj
       });
       
-      // Mostrar alerta de rechazo exitoso
       setOpenAlert({
         open: true,
         type: "success",

@@ -17,7 +17,6 @@ const Sidebar = (props: Props) => {
     const getSidebarByRole = () => {
         if (!props.user?.role) return null;
         
-        // Para IUserAuth, el role es un string
         const roleName = typeof props.user.role === 'string' ? props.user.role : props.user.role.name;
         
         switch (roleName.toLowerCase()) {
@@ -30,7 +29,7 @@ const Sidebar = (props: Props) => {
             case 'teacher':
                 return sidebarTeacherList;
             default:
-                return sidebarStudentList; // Default fallback
+                return sidebarStudentList;
         }
     };
 

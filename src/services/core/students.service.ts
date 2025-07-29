@@ -17,9 +17,6 @@ export const getAllUsers = async (): Promise<IUser[]> => {
 export const getUsersByRole = async (role: string): Promise<IUser[]> => {
   const response = await axiosInstance.get<GetUsersResponse>(`${ENDPOINT}/role/${role}`);
   return response.data.data;
-
-  // const response = await axiosInstance.get<IUser[]>(`${ENDPOINT}/role/${role}`);
-  // return response.data;
 }
 
 export const updateUserStatus = async (userId: string, statusId: string): Promise<void> => {

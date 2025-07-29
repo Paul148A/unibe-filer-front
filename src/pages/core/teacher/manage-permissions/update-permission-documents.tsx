@@ -9,7 +9,8 @@ import {
   styled,
   Alert,
   Stack,
-  CircularProgress
+  CircularProgress,
+  TextField
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -44,6 +45,7 @@ const UpdatePermissionDocuments: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [supportingDoc, setSupportingDoc] = useState<File | null>(null);
+  const [description, setDescription] = useState<string>('');
   const { setOpenAlert } = useAuth();
   const navigate = useNavigate();
   const [record, setRecord] = useState<IRecord | null>(null);
@@ -57,6 +59,7 @@ const UpdatePermissionDocuments: React.FC = () => {
   useEffect(() => {
     if (permission) {
       loadRecord(permission.record_id);
+      setDescription(permission.description || '');
     }
   }, [permission]);
 
@@ -88,15 +91,16 @@ const UpdatePermissionDocuments: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supportingDoc) {
-      setOpenAlert({ open: true, type: "error", title: "Debes seleccionar un archivo para actualizar" });
+    if (!supportingDoc && !description.trim()) {
+      setOpenAlert({ open: true, type: "error", title: "Debes seleccionar un archivo o agregar una descripción para actualizar" });
       return;
     }
     setUpdating(true);
     try {
       const response = await PermissionDocumentsService.updatePermissionDocument(
         id!,
-        supportingDoc
+        supportingDoc!,
+        description.trim() || undefined
       );
       setOpenAlert({open: true, type: "success", title: response.message});
       setTimeout(() => {
@@ -156,6 +160,18 @@ const UpdatePermissionDocuments: React.FC = () => {
               <strong>Estudiante:</strong> {record ? `${record.user.names} ${record.user.last_names} (DNI: ${record.user.identification})` : 'Cargando...'}
             </Typography>
           </Alert>
+
+          <TextField
+            label="Descripción del Permiso"
+            multiline
+            rows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe el motivo del permiso o notificación..."
+            fullWidth
+            variant="outlined"
+          />
+
           <Button
             component="label"
             variant="outlined"

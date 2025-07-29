@@ -82,7 +82,6 @@ const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs, onClose, onData
         [`${selectedDocKey}Status`]: statusObj
       });
       
-      // Mostrar alerta de éxito
       if (statusObj && statusObj.name.toLowerCase().includes('aprobado')) {
         setOpenAlert({
           open: true,
@@ -120,7 +119,6 @@ const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs, onClose, onData
         [`${selectedDocKey}Status`]: statusObj
       });
       
-      // Mostrar alerta de rechazo exitoso
       setOpenAlert({
         open: true,
         type: "success",
@@ -145,7 +143,6 @@ const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs, onClose, onData
     handleStatusClose();
   };
 
-  // Función para refrescar los datos desde el backend
   const handleRefresh = async () => {
     try {
       const refreshedDocs = await getPersonalDocumentsByRecordId(docsState.id);

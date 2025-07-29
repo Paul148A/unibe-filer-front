@@ -33,3 +33,10 @@ export const getGradesByInscriptionDocumentsId = async (inscriptionDocumentId: s
   const response = await axiosInstance.get<GetGradeResponse>(`${ENDPOINT}/inscription/${inscriptionDocumentId}`);
   return response.data.data;
 };
+
+export const downloadGradeDocument = async (id: string): Promise<Blob> => {
+  const response = await axiosInstance.get(`/${ENDPOINT}/download/${id}`, {
+    responseType: 'blob',
+  });
+  return response.data;
+};

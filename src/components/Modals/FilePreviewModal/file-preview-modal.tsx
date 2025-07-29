@@ -18,7 +18,7 @@ interface FilePreviewModalProps {
   onClose: () => void;
   fileName: string;
   fileUrl: string;
-  documentType?: 'personal' | 'inscription' | 'degree';
+  documentType?: 'personal' | 'inscription' | 'degree' | 'grade' | 'enrollment' | 'permission';
 }
 
 const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
@@ -29,19 +29,16 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   documentType
 }) => {
   const handleClose = () => {
-    // Si es una URL de blob, la liberamos para evitar memory leaks
     if (fileUrl.startsWith('blob:')) {
       window.URL.revokeObjectURL(fileUrl);
     }
     onClose();
   };
   const getFullFileUrl = (url: string): string => {
-    // Si es una URL de blob, la usamos tal como está
     if (url.startsWith('blob:')) {
       return url;
     }
     
-    // Si es una URL completa (http/https), la usamos tal como está
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
@@ -57,9 +54,17 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
       case 'degree':
         folderPath = 'documentos-grado';
         break;
+      case 'grade':
+        folderPath = 'documentos-notas';
+        break;
+      case 'enrollment':
+        folderPath = 'documentos-matriculas';
+        break;
+      case 'permission':
+        folderPath = 'documentos-permisos';
+        break;
       default:
-        //Ruta de los documentos
-        folderPath = 'uploads';
+        return url;
     }
     
     return `${IGlobal.BACK_ROUTE}/${folderPath}/${url}`;

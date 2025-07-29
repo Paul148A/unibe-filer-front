@@ -62,11 +62,9 @@ export class RecordsService {
   }
 
   static async searchRecords(searchTerm: string): Promise<{ message: string; data: IRecord[] }> {
-    // Si el término de búsqueda parece ser un DNI (solo números)
     if (/^\d+$/.test(searchTerm)) {
       return this.getRecordsByDni(searchTerm);
     }
-    // Si no, buscar por nombre
     return this.getRecordsByName(searchTerm);
   }
 } 

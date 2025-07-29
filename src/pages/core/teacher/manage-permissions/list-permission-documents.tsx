@@ -19,6 +19,7 @@ const columns: Column<IPermissionDocument & { student: string; recordCode: strin
   { key: 'student', label: 'Estudiante' },
   { key: 'recordCode', label: 'Record' },
   { key: 'supportingDoc', label: 'Nombre del Archivo', render: (value, row) => value ? value : 'Sin archivo' },
+  { key: 'description', label: 'Descripción', render: (value) => value ? value : 'Sin descripción' },
   { key: 'createdAt', label: 'Fecha y hora de creación de usuario', render: (value) => value ? new Date(value).toLocaleString('es-EC', { dateStyle: 'medium', timeStyle: 'short' }) : '-' },
   { key: 'updatedAt', label: 'Fecha y hora de subida', render: (value) => value ? new Date(value).toLocaleString('es-EC', { dateStyle: 'medium', timeStyle: 'short' }) : '-' },
 ];
@@ -138,7 +139,6 @@ const ListPermissionDocuments: React.FC = () => {
 
   const handleClosePreviewModal = () => {
     setShowPreviewModal(false);
-    // La limpieza del blob se maneja en el FilePreviewModal
   };
 
   const handleEdit = (row: IPermissionDocument & { student: string; recordCode: string }) => {

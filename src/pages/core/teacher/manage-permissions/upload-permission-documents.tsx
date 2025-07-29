@@ -8,7 +8,8 @@ import {
   Paper,
   styled,
   Alert,
-  Stack
+  Stack,
+  TextField
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import ListAltIcon from '@mui/icons-material/ListAlt';
@@ -39,12 +40,12 @@ const VisuallyHiddenInput = styled('input')({
 
 const UploadPermissionDocuments: React.FC = () => {
   const [supportingDoc, setSupportingDoc] = useState<File | null>(null);
+  const [description, setDescription] = useState<string>('');
   const [recordId, setRecordId] = useState<string>('');
   const [records, setRecords] = useState<IRecord[]>([]);
   const { setOpenAlert } = useAuth();
   const navigate = useNavigate();
 
-  // Cargar records al montar el componente
   React.useEffect(() => {
     const fetchRecords = async () => {
       try {
@@ -65,7 +66,6 @@ const UploadPermissionDocuments: React.FC = () => {
       return;
     }
 
-    // Validar que el recordId exista en la lista de records
     const recordExists = records.some(r => r.id === recordId);
     if (!recordId.trim() || !recordExists) {
       setOpenAlert({ open: true, type: "error", title: "Debes seleccionar un estudiante válido de la lista" });
@@ -75,7 +75,8 @@ const UploadPermissionDocuments: React.FC = () => {
     try {
       const response = await PermissionDocumentsService.uploadPermissionDocument(
         recordId,
-        supportingDoc
+        supportingDoc,
+        description.trim() || undefined
       );
       setOpenAlert({open: true, type: "success", title: response.message});
       setTimeout(() => {
@@ -107,6 +108,17 @@ const UploadPermissionDocuments: React.FC = () => {
             onChange={setRecordId}
             label="Seleccionar Estudiante"
             required
+          />
+
+          <TextField
+            label="Descripción del Permiso"
+            multiline
+            rows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Describe el motivo del permiso o notificación..."
+            fullWidth
+            variant="outlined"
           />
 
           <Button

@@ -233,7 +233,6 @@ const CertificatesList = () => {
           ]}
           actionKeys={["RevisarCertificadoIngles"]}
           renderActions={(row) => {
-            // Solo mostrar el botón si hay un documento de certificado de inglés
             const hasEnglishCertificate = row.inscriptionDocuments?.[0]?.englishCertificateDoc;
             if (!hasEnglishCertificate) {
               return null;

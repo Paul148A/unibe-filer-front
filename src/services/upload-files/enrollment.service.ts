@@ -30,3 +30,10 @@ export const getEnrollmentsByInscriptionDocumentsId = async (inscriptionDocument
   return response.data.data;
 };
 
+export const downloadEnrollmentDocument = async (id: string): Promise<Blob> => {
+  const response = await axiosInstance.get(`/${ENDPOINT}/download/${id}`, {
+    responseType: 'blob',
+  });
+  return response.data;
+};
+

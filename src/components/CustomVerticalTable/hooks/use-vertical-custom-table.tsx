@@ -82,5 +82,4 @@ export function useVerticalCustomTable<T>(
   );
 }
 
-// Exportar iconos para uso en otros componentes
 export { EditIcon, DeleteIcon, RefreshIcon, VisibilityIcon };

@@ -4,11 +4,15 @@ import { IPermissionDocument } from '../../interfaces/IPermissionDocument';
 export class PermissionDocumentsService {
   static async uploadPermissionDocument(
     recordId: string,
-    file: File
+    file: File,
+    description?: string
   ): Promise<{ message: string; data: IPermissionDocument }> {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('recordId', recordId);
+    if (description) {
+      formData.append('description', description);
+    }
     const response = await axios.post(
       `/api1/permission/upload-permission-document/`,
       formData,
@@ -23,10 +27,14 @@ export class PermissionDocumentsService {
 
   static async updatePermissionDocument(
     id: string,
-    file: File
+    file: File,
+    description?: string
   ): Promise<{ message: string; data: IPermissionDocument }> {
     const formData = new FormData();
     formData.append('file', file);
+    if (description) {
+      formData.append('description', description);
+    }
     const response = await axios.put(
       `/api1/permission/update-permission-document/${id}`,
       formData,

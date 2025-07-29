@@ -135,7 +135,6 @@ const ListInscriptionDocuments = () => {
             sx={{backgroundColor: 'green', color: 'white'}}
             startIcon={<EditIcon />}
             onClick={handleEnrollmentClick}
-          //disabled={documents}
           >
             Agregar documento de matrícula
           </Button>
@@ -143,7 +142,6 @@ const ListInscriptionDocuments = () => {
             sx={{backgroundColor: 'blue', color: 'white'}}
             startIcon={<EditIcon />}
             onClick={handleGradeClick}
-          //disabled={documents}
           >
             Agregar documento de notas
           </Button>

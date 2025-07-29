@@ -9,7 +9,6 @@ const StudentDashboard = () => {
   const { user } = useAuth();
   const [record, setRecord] = useState<IRecord | null>(null);
   const [loading, setLoading] = useState(true);
-  // const [documents, setDocuments] = useState([]);
 
   useEffect(() => {
     const fetchRecord = async () => {

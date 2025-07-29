@@ -229,7 +229,6 @@ const StudentsForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Validar todo el formulario antes de enviar
     if (!validateForm()) {
       setOpenAlert({ open: true, type: "error", title: "Por favor, corrija los errores en el formulario" });
       return;
