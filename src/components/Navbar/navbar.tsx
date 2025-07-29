@@ -1,5 +1,6 @@
-import { Box, AppBar, Toolbar, IconButton, Typography } from "@mui/material"
+import { Box, AppBar, Toolbar, IconButton, Typography } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useAuth } from "../Context/context";
 import { Link } from "react-router-dom";
 
@@ -27,9 +28,12 @@ const Navbar = () => {
             <img src="./logoUnibe.png" alt="" width="120" height="55" style={{ marginTop: 4 }} />
           </Link>
           <Box sx={{ flexGrow: 1 }} />
-          <Typography variant="h6" component="div">
-            {userInfo?.names}
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <AccountCircleIcon />
+            <Typography variant="h6" component="div">
+              {userInfo?.names} {userInfo?.last_names}
+            </Typography>
+          </Box>
         </Toolbar>
       </AppBar>
     </Box>
