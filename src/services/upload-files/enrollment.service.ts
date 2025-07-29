@@ -11,13 +11,17 @@ interface GetEnrollmentResponse {
 
 export const uploadEnrollment = async (enrollment: IEnrollment, file: File) => {
   const formData = new FormData();
-  formData.append('file', file);
-  formData.append('name', enrollment.name); 
+  formData.append('file', file, file.name);
   formData.append('description', enrollment.description);
   formData.append('semesterId', enrollment.semesterId);
   formData.append('inscriptionDocumentId', enrollment.inscriptionDocumentId);
   
-  const response = await axiosInstance.post<GetEnrollmentResponse>(ENDPOINT, formData);
+  const response = await axiosInstance.post<GetEnrollmentResponse>(ENDPOINT, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  }
+);
   return response.data;
 }
 
