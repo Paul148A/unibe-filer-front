@@ -28,7 +28,20 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   fileUrl,
   documentType
 }) => {
+  const handleClose = () => {
+    // Si es una URL de blob, la liberamos para evitar memory leaks
+    if (fileUrl.startsWith('blob:')) {
+      window.URL.revokeObjectURL(fileUrl);
+    }
+    onClose();
+  };
   const getFullFileUrl = (url: string): string => {
+    // Si es una URL de blob, la usamos tal como está
+    if (url.startsWith('blob:')) {
+      return url;
+    }
+    
+    // Si es una URL completa (http/https), la usamos tal como está
     if (url.startsWith('http://') || url.startsWith('https://')) {
       return url;
     }
@@ -57,7 +70,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={handleClose}
       maxWidth="lg"
       fullWidth
       PaperProps={{
@@ -76,7 +89,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
         </Box>
         <IconButton
           aria-label="close"
-          onClick={onClose}
+          onClick={handleClose}
           sx={{
             color: (theme) => theme.palette.grey[500],
           }}
@@ -114,7 +127,7 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
         )}
       </DialogContent>
       <DialogActions sx={{ p: 2 }}>
-        <Button onClick={onClose} variant="outlined">
+        <Button onClick={handleClose} variant="outlined">
           Cerrar
         </Button>
         {fullFileUrl && (

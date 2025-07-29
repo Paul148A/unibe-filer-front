@@ -8,6 +8,7 @@ import { Menu, MenuItem } from '@mui/material';
 import { getDocumentStatuses, updateInscriptionDocumentStatus, getInscriptionDocumentsByRecordId } from '../../../services/upload-files/inscription-documents.service';
 import { useEffect } from 'react';
 import ConfirmDialog from '../../Global/ConfirmDialog';
+import { useAuth } from '../../Context/context';
 
 interface Props {
   inscriptionDocs: IInscriptionDocument;
@@ -41,6 +42,7 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
   const [statusOptions, setStatusOptions] = useState<{ id: string, name: string }[]>([]);
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
   const [pendingStatusId, setPendingStatusId] = useState<string | null>(null);
+  const { setOpenAlert } = useAuth();
 
   useEffect(() => {
     getDocumentStatuses().then(setStatusOptions);
@@ -79,8 +81,27 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
         ...docsState,
         [`${selectedDocKey}Status`]: statusObj
       });
+      
+      // Mostrar alerta de éxito
+      if (statusObj && statusObj.name.toLowerCase().includes('aprobado')) {
+        setOpenAlert({
+          open: true,
+          type: "success",
+          title: "El documento fue aprobado correctamente"
+        });
+      } else {
+        setOpenAlert({
+          open: true,
+          type: "success",
+          title: "Estado actualizado correctamente"
+        });
+      }
     } catch (e) {
-      alert('Error al actualizar el estado');
+      setOpenAlert({
+        open: true,
+        type: "error",
+        title: "Error al actualizar el estado"
+      });
     }
     setLoading(false);
     handleStatusClose();
@@ -96,8 +117,19 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
         ...docsState,
         [`${selectedDocKey}Status`]: statusObj
       });
+      
+      // Mostrar alerta de rechazo exitoso
+      setOpenAlert({
+        open: true,
+        type: "success",
+        title: "Documento eliminado correctamente, el correo de notificación fue enviado correctamente"
+      });
     } catch (e) {
-      alert('Error al actualizar el estado');
+      setOpenAlert({
+        open: true,
+        type: "error",
+        title: "Error al actualizar el estado"
+      });
     }
     setLoading(false);
     setOpenConfirmDialog(false);
@@ -117,8 +149,17 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
       setDocsState(refreshedDocs);
       if (onClose) onClose();
       if (onDataChanged) onDataChanged();
+      setOpenAlert({
+        open: true,
+        type: "success",
+        title: "Documentos actualizados correctamente"
+      });
     } catch (e) {
-      alert('Error al refrescar los documentos');
+      setOpenAlert({
+        open: true,
+        type: "error",
+        title: "Error al refrescar los documentos"
+      });
     }
   };
 
@@ -175,12 +216,12 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
                       <TableCell>
                         {hasDoc ? (
                           status ? (
-                            <Chip label={status.name} color={getStatusColor(status.name)} />
+                            <Chip label={status.name} color={getStatusColor(status.name)} sx={{ borderRadius: 0 }} />
                           ) : (
-                            <Chip label="En revisión" color="warning" />
+                            <Chip label="En revisión" color="warning" sx={{ borderRadius: 0 }} />
                           )
                         ) : (
-                          <Chip label="Sin estado" />
+                          <Chip label="Sin estado" sx={{ borderRadius: 0 }} />
                         )}
                       </TableCell>
                     </TableRow>

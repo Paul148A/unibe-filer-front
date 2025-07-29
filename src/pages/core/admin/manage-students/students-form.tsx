@@ -32,6 +32,14 @@ interface Status {
   name: string;
 }
 
+interface ValidationErrors {
+  names?: string;
+  last_names?: string;
+  identification?: string;
+  email?: string;
+  password?: string;
+}
+
 const StudentsForm = () => {
   const [formData, setFormData] = useState({
     names: '',
@@ -46,6 +54,7 @@ const StudentsForm = () => {
     is_approved: false,
   });
 
+  const [errors, setErrors] = useState<ValidationErrors>({});
   const [roles, setRoles] = useState<Role[]>([]);
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [semesters, setSemesters] = useState<any[]>([]);
@@ -54,6 +63,116 @@ const StudentsForm = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { setOpenAlert } = useAuth();
   const navigate = useNavigate();
+
+  const validateNames = (names: string): string | undefined => {
+    if (!names.trim()) return 'Los nombres son requeridos';
+    
+    const nameParts = names.trim().split(/\s+/);
+    if (nameParts.length < 2) {
+      return 'Debe ingresar al menos 2 nombres';
+    }
+    
+    if (nameParts.length > 4) {
+      return 'No puede ingresar más de 4 nombres';
+    }
+    
+    for (const name of nameParts) {
+      if (name.length < 2) {
+        return 'Cada nombre debe tener al menos 2 caracteres';
+      }
+    }
+    
+    return undefined;
+  };
+
+  const validateLastNames = (lastNames: string): string | undefined => {
+    if (!lastNames.trim()) return 'Los apellidos son requeridos';
+    
+    const lastNameParts = lastNames.trim().split(/\s+/);
+    if (lastNameParts.length < 2) {
+      return 'Debe ingresar al menos 2 apellidos';
+    }
+    
+    if (lastNameParts.length > 4) {
+      return 'No puede ingresar más de 4 apellidos';
+    }
+    
+    for (const lastName of lastNameParts) {
+      if (lastName.length < 2) {
+        return 'Cada apellido debe tener al menos 2 caracteres';
+      }
+    }
+    
+    return undefined;
+  };
+
+  const validateIdentification = (identification: string): string | undefined => {
+    if (!identification.trim()) return 'La identificación es requerida';
+    
+    const cleanId = identification.replace(/\s/g, '').replace(/[^0-9]/g, '');
+    
+    if (cleanId.length !== 10) {
+      return 'La identificación debe tener exactamente 10 dígitos';
+    }
+    
+    if (!/^\d{10}$/.test(cleanId)) {
+      return 'La identificación debe contener solo números';
+    }
+    
+    return undefined;
+  };
+
+  const validateEmail = (email: string): string | undefined => {
+    if (!email.trim()) return 'El correo electrónico es requerido';
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Ingrese un correo electrónico válido';
+    }
+    
+    return undefined;
+  };
+
+  const validatePassword = (password: string): string | undefined => {
+    if (!password) return 'La contraseña es requerida';
+    
+    if (password.length < 6) {
+      return 'La contraseña debe tener al menos 6 caracteres';
+    }
+    
+    return undefined;
+  };
+
+  const validateField = (name: string, value: string) => {
+    switch (name) {
+      case 'names':
+        return validateNames(value);
+      case 'last_names':
+        return validateLastNames(value);
+      case 'identification':
+        return validateIdentification(value);
+      case 'email':
+        return validateEmail(value);
+      case 'password':
+        return validatePassword(value);
+      default:
+        return undefined;
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: ValidationErrors = {};
+    
+    newErrors.names = validateNames(formData.names);
+    newErrors.last_names = validateLastNames(formData.last_names);
+    newErrors.identification = validateIdentification(formData.identification);
+    newErrors.email = validateEmail(formData.email);
+    newErrors.password = validatePassword(formData.password);
+    
+    setErrors(newErrors);
+    
+    return !Object.values(newErrors).some(error => error !== undefined);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -91,20 +210,32 @@ const StudentsForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | { name?: string; value: unknown }>) => {
     const { name, value, type, checked } = e.target as any;
+    const newValue = type === 'checkbox' ? checked : value;
+    
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value,
+      [name]: newValue,
     }));
+
+    if (name && typeof newValue === 'string') {
+      const error = validateField(name, newValue);
+      setErrors(prev => ({
+        ...prev,
+        [name]: error
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validar todo el formulario antes de enviar
+    if (!validateForm()) {
+      setOpenAlert({ open: true, type: "error", title: "Por favor, corrija los errores en el formulario" });
+      return;
+    }
+
     try {
-      if (!formData.names || !formData.last_names || !formData.identification || 
-          !formData.email || !formData.password || !formData.role_id || !formData.status_id) {
-        setOpenAlert({ open: true, type: "error", title: "Todos los campos son requeridos" });
-        return;
-      }
 
       const userData = {
         names: formData.names,
@@ -156,6 +287,8 @@ const StudentsForm = () => {
           value={formData.names}
           onChange={handleChange}
           required
+          error={!!errors.names}
+          helperText={errors.names}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -172,6 +305,8 @@ const StudentsForm = () => {
           value={formData.last_names}
           onChange={handleChange}
           required
+          error={!!errors.last_names}
+          helperText={errors.last_names}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -188,6 +323,12 @@ const StudentsForm = () => {
           value={formData.identification}
           onChange={handleChange}
           required
+          error={!!errors.identification}
+          helperText={errors.identification}
+          inputProps={{
+            maxLength: 10,
+            pattern: '[0-9]*'
+          }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -205,6 +346,8 @@ const StudentsForm = () => {
           value={formData.email}
           onChange={handleChange}
           required
+          error={!!errors.email}
+          helperText={errors.email}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
@@ -222,6 +365,8 @@ const StudentsForm = () => {
           value={formData.password}
           onChange={handleChange}
           required
+          error={!!errors.password}
+          helperText={errors.password}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">

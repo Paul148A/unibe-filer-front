@@ -14,6 +14,7 @@ interface Props<T> {
   onEditClick?: (row: T) => void;
   onDeleteClick?: (row: T) => void;
   onDownloadClick?: (row: T) => void;
+  onPreviewClick?: (row: T) => void;
 }
 
 const CustomTable = <T,>({
@@ -24,8 +25,9 @@ const CustomTable = <T,>({
   onEditClick,
   onDeleteClick,
   onDownloadClick,
+  onPreviewClick,
 }: Props<T>) => {
-  const getActions = useCustomTable<T>(actionKeys, onEditClick, onDeleteClick, onDownloadClick);
+  const getActions = useCustomTable<T>(actionKeys, onEditClick, onDeleteClick, onDownloadClick, onPreviewClick);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%' }}>

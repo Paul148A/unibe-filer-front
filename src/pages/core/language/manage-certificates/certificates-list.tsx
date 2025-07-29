@@ -7,7 +7,9 @@ import CustomTable from "../../../../components/CustomTable/custom-table";
 import { getAllRecords } from "../../../../services/upload-files/record.service";
 import { getInscriptionDocumentsByRecordId, updateInscriptionDocumentStatus, getDocumentStatuses } from "../../../../services/upload-files/inscription-documents.service";
 import Loader from "../../../../components/Loader/loader";
-import { Typography, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem, Box } from "@mui/material";
+import { Typography, Dialog, DialogTitle, DialogContent, FormControl, InputLabel, Select, MenuItem, Box, Button } from "@mui/material";
+import { Link } from "react-router-dom";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import ConfirmDialog from '../../../../components/Global/ConfirmDialog';
 
 interface RecordWithInscription extends IRecord {
@@ -230,6 +232,24 @@ const CertificatesList = () => {
             },
           ]}
           actionKeys={["RevisarCertificadoIngles"]}
+          renderActions={(row) => {
+            // Solo mostrar el botón si hay un documento de certificado de inglés
+            const hasEnglishCertificate = row.inscriptionDocuments?.[0]?.englishCertificateDoc;
+            if (!hasEnglishCertificate) {
+              return null;
+            }
+            
+            return (
+              <Button 
+                size="small" 
+                sx={{ backgroundColor: 'green' }} 
+                component={Link} 
+                to={`/certificates-language-page/${row.user.id}`}
+              >
+                <VisibilityIcon sx={{ color: 'white' }} />
+              </Button>
+            );
+          }}
         />
       </Box>
 

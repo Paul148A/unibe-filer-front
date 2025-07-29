@@ -48,7 +48,9 @@ const VerticalTable = <T,>({
                   color: 'white',
                   '&:hover': { backgroundColor: 'darkorange' },
                   width: '32px',
-                  height: '32px'
+                  height: '32px',
+                  borderRadius: 0,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                 }}
               >
                 <VisibilityIcon fontSize="small" />
@@ -94,7 +96,9 @@ const VerticalTable = <T,>({
                             color: 'white',
                             '&:hover': { backgroundColor: 'darkorange' },
                             width: '32px',
-                            height: '32px'
+                            height: '32px',
+                            borderRadius: 1,
+                            boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
                           }}
                         >
                           <VisibilityIcon fontSize="small" />

@@ -36,7 +36,8 @@ export function useCustomTable<T>(
   actions?: ActionKey[],
   onEditClick?: (row: T) => void,
   onDeleteClick?: (row: T) => void,
-  onDownloadClick?: (row: T) => void
+  onDownloadClick?: (row: T) => void,
+  onPreviewClick?: (row: T) => void
 ) {
   return useCallback(
     (row: T) => {
@@ -55,7 +56,7 @@ export function useCustomTable<T>(
             </Button>
           )}
           {actions.includes('VisualizarPdf') && (
-            <Button size="small" sx={{backgroundColor: 'orange'}} onClick={() => console.log('Editar', row)}>
+            <Button size="small" sx={{backgroundColor: 'orange'}} onClick={() => onPreviewClick && onPreviewClick(row)}>
               <VisibilityIcon sx={{color: 'white'}} />
             </Button>
           )}
@@ -122,6 +123,6 @@ export function useCustomTable<T>(
         </Stack>
       ); 
     },
-    [actions, onEditClick, onDeleteClick, onDownloadClick]
+    [actions, onEditClick, onDeleteClick, onDownloadClick, onPreviewClick]
   );
 }

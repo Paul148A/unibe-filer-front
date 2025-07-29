@@ -10,7 +10,7 @@ export interface IUser {
   identification: string;
   email: string;
   role: IRole;
-  status: IStatus;
+  status?: IStatus;
   semester?: ISemester;
   career?: ICareer
   is_approved?: boolean;

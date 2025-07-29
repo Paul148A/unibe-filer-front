@@ -12,6 +12,8 @@ import { IPermissionDocument } from '../../../../interfaces/IPermissionDocument'
 import { RecordsService, IRecord } from '../../../../services/core/records.service';
 import CustomTable from '../../../../components/CustomTable/custom-table';
 import { Column, ActionKey } from '../../../../components/CustomTable/hooks/use-custom-table';
+import ConfirmDialog from '../../../../components/Global/ConfirmDialog';
+import FilePreviewModal from '../../../../components/Modals/FilePreviewModal/file-preview-modal';
 
 const columns: Column<IPermissionDocument & { student: string; recordCode: string }>[]= [
   { key: 'student', label: 'Estudiante' },
@@ -22,7 +24,7 @@ const columns: Column<IPermissionDocument & { student: string; recordCode: strin
 ];
 
 const actionKeys: ActionKey[] = [
-  'DescargarDocumentoPermiso',
+  'VisualizarPdf',
   'EditarDocumentoPermiso',
   'EliminarDocumentoPermiso',
 ];
@@ -34,6 +36,10 @@ const ListPermissionDocuments: React.FC = () => {
   const { setOpenAlert } = useAuth();
   const navigate = useNavigate();
   const [tableData, setTableData] = useState<(IPermissionDocument & { student: string; recordCode: string })[]>([]);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false);
+  const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
+  const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const [previewFile, setPreviewFile] = useState<{ url: string; name: string } | null>(null);
 
   useEffect(() => {
     loadPermissions();
@@ -86,9 +92,14 @@ const ListPermissionDocuments: React.FC = () => {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('¿Estás seguro de que quieres eliminar este documento?')) {
+    setPendingDeleteId(id);
+    setOpenConfirmDialog(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!pendingDeleteId) return;
       try {
-        await PermissionDocumentsService.deletePermissionDocument(id);
+      await PermissionDocumentsService.deletePermissionDocument(pendingDeleteId);
         setOpenAlert({ open: true, type: "success", title: "Documento eliminado correctamente" });
         loadPermissions();
       } catch (error: any) {
@@ -98,27 +109,36 @@ const ListPermissionDocuments: React.FC = () => {
           title: error.response?.data?.message || "Error al eliminar documento" 
         });
       }
-    }
+    setOpenConfirmDialog(false);
+    setPendingDeleteId(null);
   };
 
-  const handleDownload = async (id: string) => {
+  const handleCancelDelete = () => {
+    setOpenConfirmDialog(false);
+    setPendingDeleteId(null);
+  };
+
+  const handlePreview = async (id: string) => {
     try {
       const blob = await PermissionDocumentsService.downloadDocument(id);
       const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `respaldo.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
+      setPreviewFile({
+        url: url,
+        name: 'Documento de Permiso'
+      });
+      setShowPreviewModal(true);
     } catch (error: any) {
       setOpenAlert({ 
         open: true, 
         type: "error", 
-        title: error.response?.data?.message || "Error al descargar documento" 
+        title: error.response?.data?.message || "Error al previsualizar documento" 
       });
     }
+  };
+
+  const handleClosePreviewModal = () => {
+    setShowPreviewModal(false);
+    // La limpieza del blob se maneja en el FilePreviewModal
   };
 
   const handleEdit = (row: IPermissionDocument & { student: string; recordCode: string }) => {
@@ -129,8 +149,8 @@ const ListPermissionDocuments: React.FC = () => {
     handleDelete(row.id);
   };
 
-  const handleDownloadRow = (row: IPermissionDocument & { student: string; recordCode: string }) => {
-    handleDownload(row.id);
+  const handlePreviewRow = (row: IPermissionDocument & { student: string; recordCode: string }) => {
+    handlePreview(row.id);
   };
 
   if (loading) {
@@ -161,8 +181,28 @@ const ListPermissionDocuments: React.FC = () => {
         actionKeys={actionKeys}
         onEditClick={handleEdit}
         onDeleteClick={handleDeleteRow}
-        onDownloadClick={handleDownloadRow}
+        onPreviewClick={handlePreviewRow}
       />
+
+      <ConfirmDialog
+        open={openConfirmDialog}
+        title="Confirmar eliminar documento"
+        message="¿Estás seguro de que deseas eliminar este documento? Esta acción no se puede deshacer."
+        onCancel={handleCancelDelete}
+        onConfirm={handleConfirmDelete}
+        confirmText="Confirmar"
+        cancelText="Cancelar"
+      />
+
+      {showPreviewModal && previewFile && (
+        <FilePreviewModal
+          open={showPreviewModal}
+          onClose={handleClosePreviewModal}
+          fileName={previewFile.name}
+          fileUrl={previewFile.url}
+          documentType={undefined}
+        />
+      )}
     </Box>
   );
 };
