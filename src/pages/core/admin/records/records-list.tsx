@@ -38,12 +38,14 @@ const RecordsList = () => {
       const identification = record.user?.identification?.toLowerCase() ?? "";
       const email = record.user?.email?.toLowerCase() ?? "";
       const code = record.code?.toLowerCase() ?? "";
+      const career = record.user?.career?.name?.toLowerCase() ?? "";
 
       return (
         fullName.includes(searchText.toLowerCase()) ||
         identification.includes(searchText.toLowerCase()) ||
         email.includes(searchText.toLowerCase()) ||
-        code.includes(searchText.toLowerCase())
+        code.includes(searchText.toLowerCase()) ||
+        career.includes(searchText.toLowerCase())
       );
     });
   }, [records, searchText]);
@@ -59,7 +61,7 @@ const RecordsList = () => {
         <TextField
           sx={{ width: 350 }}
           variant="outlined"
-          label="Buscar por nombre, identificación, correo o código"
+          label="Buscar por nombre, identificación, correo, código o carrera"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
@@ -105,6 +107,14 @@ const RecordsList = () => {
                   typeof value === "object" && value !== null && "email" in value
                     ? value.email
                     : "",
+              },
+              {
+                key: "user",
+                label: "Carrera",
+                render: (value) =>
+                  typeof value === "object" && value !== null && "career" in value && value.career
+                    ? value.career.name
+                    : "No asignada",
               },
             ]}
             actionKeys={["RevisarExpediente"]}

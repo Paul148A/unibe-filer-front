@@ -64,12 +64,14 @@ const StudentsList = () => {
       const email = user.email?.toLowerCase() ?? "";
       const role = user.role?.description?.toLowerCase() ?? "";
       const status = user.status?.description?.toLowerCase() ?? "";
+      const career = user.career?.name?.toLowerCase() ?? "";
       return (
         fullName.includes(searchText.toLowerCase()) ||
         identification.includes(searchText.toLowerCase()) ||
         email.includes(searchText.toLowerCase()) ||
         role.includes(searchText.toLowerCase()) ||
-        status.includes(searchText.toLowerCase())
+        status.includes(searchText.toLowerCase()) ||
+        career.includes(searchText.toLowerCase())
       );
     });
   }, [users, searchText]);
@@ -178,7 +180,7 @@ const StudentsList = () => {
         <TextField
           sx={{ width: 350 }}
           variant="outlined"
-          label="Buscar por nombre, identificación, correo o código"
+          label="Buscar por nombre, identificación, correo, rol, estado o carrera"
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
@@ -196,6 +198,11 @@ const StudentsList = () => {
               { key: "names", label: "Nombres" },
               { key: "last_names", label: "Apellidos" },
               { key: "email", label: "Correo electrónico" },
+              { key: "career", 
+                label: "Carrera",
+                render: (value) =>
+                  value && typeof value === "object" ? value.name : "Sin carrera",
+              },
               {
                 key: "role",
                 label: "Rol",
