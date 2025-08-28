@@ -12,7 +12,6 @@ import {
 import {
   Twitter,
   LinkedIn,
-  Pinterest,
   Facebook,
   Favorite
 } from '@mui/icons-material';
@@ -20,10 +19,9 @@ import {
 const Footer = () => {
   
   const socialLinks = [
-    { icon: <Twitter />, href: '#', label: 'Twitter' },
-    { icon: <Facebook />, href: '#', label: 'Facebook' },
-    { icon: <LinkedIn />, href: '#', label: 'LinkedIn' },
-    { icon: <Pinterest />, href: '#', label: 'Pinterest' }
+    { icon: <Twitter />, href: 'https://x.com/unibe_ec', label: 'Twitter' },
+    { icon: <Facebook />, href: 'https://www.facebook.com/unibe.edu.ec', label: 'Facebook' },
+    { icon: <LinkedIn />, href: 'https://www.linkedin.com/school/unibe-ecuador', label: 'LinkedIn' },
   ];
 
   const quickLinks = [
