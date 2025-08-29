@@ -153,6 +153,7 @@ const ListDegreeDocuments = () => {
           fileName={previewFile.name}
           fileUrl={previewFile.url}
           documentType="degree"
+          userIdentification={documents?.record?.user?.identification}
         />
       )}
     </>

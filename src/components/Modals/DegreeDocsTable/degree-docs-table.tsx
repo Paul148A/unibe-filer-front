@@ -293,6 +293,7 @@ const DegreeDocumentsTable: React.FC<Props> = ({ degreeDocs, onClose, onDataChan
           fileName={previewFile.name}
           fileUrl={previewFile.url}
           documentType="degree"
+          userIdentification={degreeDocs?.record?.user?.identification}
         />
       )}
     </>

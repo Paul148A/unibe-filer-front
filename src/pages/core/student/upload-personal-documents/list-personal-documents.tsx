@@ -149,6 +149,7 @@ const ListPersonalDocuments = () => {
           fileName={previewFile.name}
           fileUrl={previewFile.url}
           documentType="personal"
+          userIdentification={documents?.record?.user?.identification}
         />
       )}
     </>

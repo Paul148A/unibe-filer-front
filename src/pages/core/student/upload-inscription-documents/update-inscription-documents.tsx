@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../../api/axios';
 import { IInscriptionDocument } from '../../../../interfaces/IInscriptionDocument';
 import { useAuth } from '../../../../components/Context/context';
 import '../../../../styles/update-documents.css';
@@ -64,13 +64,14 @@ const UpdateInscriptionDocumentsModal: React.FC<UpdateInscriptionDocumentsModalP
     if (files.approvalDoc) formData.append('approval_doc', files.approvalDoc);
 
     try {
-      await axios.put(
-        `http://localhost:3000/api1/inscription/update-inscription-form/${document.id}`, 
+      await axiosInstance.put(
+        `/api1/inscription/update-inscription-form/${document.id}`, 
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data'
-          }
+          },
+          withCredentials: true
         }
       );
       setOpenAlert({open: true, type: "success", title: "Documentos actualizados correctamente"});

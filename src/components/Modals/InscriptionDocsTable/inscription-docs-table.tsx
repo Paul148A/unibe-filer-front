@@ -284,6 +284,7 @@ const InscriptionDocumentsTable: React.FC<Props> = ({ inscriptionDocs, onClose, 
           fileName={previewFile.name}
           fileUrl={previewFile.url}
           documentType="inscription"
+          userIdentification={inscriptionDocs?.record?.user?.identification}
         />
       )}
     </>

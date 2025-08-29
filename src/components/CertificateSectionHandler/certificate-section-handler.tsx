@@ -183,6 +183,7 @@ const CertificateSectionHandler = (props: Props) => {
           fileName={previewFile.name}
           fileUrl={previewFile.url}
           documentType="inscription"
+          userIdentification={docsState?.record?.user?.identification}
         />
       )}
     </>

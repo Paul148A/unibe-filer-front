@@ -16,6 +16,12 @@ export interface IDegreeDocument {
   electiveGradeStatus?: { id: string; name: string };
   academicClearance: string;
   academicClearanceStatus?: { id: string; name: string };
+  record?: {
+    id: string;
+    user?: {
+      identification: string;
+    };
+  };
   createdAt: string;
   updatedAt: string;
 }

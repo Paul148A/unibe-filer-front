@@ -12,6 +12,12 @@ export interface IInscriptionDocument {
   enrollmentCertificateDocStatus?: { id: string; name: string };
   approvalDoc: string;
   approvalDocStatus?: { id: string; name: string };
+  record?: {
+    id: string;
+    user?: {
+      identification: string;
+    };
+  };
   createdAt: string;
   updatedAt: string;
 }

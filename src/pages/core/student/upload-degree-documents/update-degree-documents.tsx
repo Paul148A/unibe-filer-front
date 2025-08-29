@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../../api/axios';
 import { IDegreeDocument } from '../../../../interfaces/IDegreeDocument';
 import { useAuth } from '../../../../components/Context/context';
 import '../../../../styles/update-documents.css';
@@ -62,13 +62,14 @@ const UpdateDegreeDocumentsModal: React.FC<UpdateDegreeDocumentsModalProps> = ({
     if (files.academicClearance) formData.append('academic_clearance', files.academicClearance);
 
     try {
-      await axios.put(
-        `http://localhost:3000/api1/degree/update-degree/${document.id}`, 
+      await axiosInstance.put(
+        `/api1/degree/update-degree/${document.id}`, 
         formData,
         {
           headers: {
             'Content-Type': 'multipart/form-data'
-          }
+          },
+          withCredentials: true
         }
       );
       setOpenAlert({open: true, type: "success", title: "Documentos actualizados correctamente"});

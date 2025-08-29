@@ -14,7 +14,6 @@ export const getAllPersonalDocuments = async (): Promise<IPersonalDocument[]> =>
   const response = await axiosInstance.get<GetPersonalDocumentsResponse>(`${ENDPOINT}/list-personal-documents`, {
     withCredentials: true
   });
-  console.log(response.data);
   return response.data.data;
 };
 
@@ -36,7 +35,8 @@ export const updatePersonalDocuments = async ( id: string, formData: FormData ):
     formData,{
       headers: {
         'Content-Type': 'multipart/form-data'
-      }
+      },
+      withCredentials: true
     }
   );
 };

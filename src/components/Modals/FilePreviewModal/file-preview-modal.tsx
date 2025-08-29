@@ -19,6 +19,7 @@ interface FilePreviewModalProps {
   fileName: string;
   fileUrl: string;
   documentType?: 'personal' | 'inscription' | 'degree' | 'grade' | 'enrollment' | 'permission';
+  userIdentification?: string;
 }
 
 const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
@@ -26,7 +27,8 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
   onClose,
   fileName,
   fileUrl,
-  documentType
+  documentType,
+  userIdentification
 }) => {
   const handleClose = () => {
     if (fileUrl.startsWith('blob:')) {
@@ -67,7 +69,13 @@ const FilePreviewModal: React.FC<FilePreviewModalProps> = ({
         return url;
     }
     
-    return `${IGlobal.BACK_ROUTE}/${folderPath}/${url}`;
+    if (userIdentification) {
+      const fullUrl = `${IGlobal.BACK_ROUTE}/${folderPath}/${userIdentification}/${url}`;
+      return fullUrl;
+    }
+    
+    const fallbackUrl = `${IGlobal.BACK_ROUTE}/${folderPath}/${url}`;
+    return fallbackUrl;
   };
 
   const fullFileUrl = getFullFileUrl(fileUrl);

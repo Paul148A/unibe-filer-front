@@ -37,7 +37,6 @@ const ListInscriptionDocuments = () => {
     const fetchDocuments = async () => {
       try {
         const docs = await getInscriptionDocumentsByRecordId(cleanRecordId);
-        console.log('documentos de inscripcion:', docs);
         setDocuments(docs);
       } catch (error) {
         setOpenAlert({
@@ -192,6 +191,7 @@ const ListInscriptionDocuments = () => {
           fileName={previewFile.name}
           fileUrl={previewFile.url}
           documentType="inscription"
+          userIdentification={documents?.record?.user?.identification}
         />
       )}
 

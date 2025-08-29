@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../../../api/axios';
 import { IPersonalDocument } from '../../../../interfaces/IPersonalDocument';
 import { useAuth } from '../../../../components/Context/context';
 import '../../../../styles/update-documents.css';
@@ -60,8 +60,8 @@ const UpdatePersonalDocumentsModal: React.FC<UpdatePersonalDocumentsModalProps> 
     if (files.notarizDegreeDoc) formData.append('notarizDegreeDoc', files.notarizDegreeDoc);
 
     try {
-      await axios.put(
-        `http://localhost:3000/api1/personal/update-personal-documents/${document.id}`, 
+      await axiosInstance.put(
+        `api1/personal/update-personal-documents/${document.id}`, 
         formData,
         {
           headers: {

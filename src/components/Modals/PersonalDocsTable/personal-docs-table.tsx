@@ -290,6 +290,7 @@ const PersonalDocumentsTable: React.FC<Props> = ({ personalDocs, onClose, onData
           fileName={previewFile.name}
           fileUrl={previewFile.url}
           documentType="personal"
+          userIdentification={personalDocs?.record?.user?.identification}
         />
       )}
     </>

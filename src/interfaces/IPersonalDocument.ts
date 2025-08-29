@@ -10,6 +10,9 @@ export interface IPersonalDocument {
   notarizDegreeDocStatus?: { id: string; name: string };
   record?: {
     id: string;
+    user?: {
+      identification: string;
+    };
   };
   createdAt: string;
   updatedAt: string;
